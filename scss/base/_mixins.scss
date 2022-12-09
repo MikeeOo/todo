@@ -1,0 +1,39 @@
+
+//USE WITHOUT BOOTSTRAP GRID
+// EDIT USING MIN-WIDTH = LESS MIXINS
+
+@mixin notebook {
+  @media (max-width: 1352px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 792px) {
+    @content;
+  }
+}
+
+//   320px - iPhone 4
+//   480px - Nokia Lumia
+//   600px - Inne Phone
+//   768px - iPad
+// > 800px - Wychodzimy z zakresu pojedynczych kolumn - układ mobile
+//   1024px - iPad Landscape
+// > 1280px - Desktop, Laptop
+//   1366px - Najpopularniejsze laptopy
+// > 1600px - HD desktop
+
+
+//xs - max-width: 575px
+//sm - min-width: 576px
+//md - min-width: 768px
+//lg - min-width: 992px
+//xl - min-width: 1200px
+//hd - min-width: 1600px
