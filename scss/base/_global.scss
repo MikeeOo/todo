@@ -6,8 +6,6 @@
 
 * {
   box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 body {
@@ -15,14 +13,15 @@ body {
   color: $white;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1.2rem;
+  //font-size: 1.8rem; desktop
 }
 
-.app {
+#app {
   background-image: url("assets/bg-desktop-dark.jpg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  height: 20rem;
+  height: 17em;
 }
 
 .container {
@@ -44,11 +43,15 @@ form {
 }
 
 input[type="text"], button{
-  padding: 1.5em 0;
+  padding: 0;
   font: inherit;
   background-color: $main-bg;
   border: none;
   color: white;
+}
+
+input[type="text"] {
+  padding: 1.5em 0;
 }
 
 .task_checker {
@@ -102,7 +105,7 @@ input[type="checkbox"] {
 }
 
 .checkmark:after {
-  left: 30%;
+  left: 31%;
   top: 13%;
   width: 0.5rem;
   height: 1rem;
@@ -111,3 +114,17 @@ input[type="checkbox"] {
   transform: rotate(45deg);
 }
 
+button:hover {
+  color: $white;
+}
+
+.fa-plus {
+  display: block;
+  color: #393A4B;
+  font-size: 1.6rem;
+  padding: 1em 1.25em;
+
+  &:hover {
+    color: $white;
+  }
+}
