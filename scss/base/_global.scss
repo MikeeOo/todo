@@ -1,43 +1,36 @@
+@import "variables";
+
+:root {
+  font-size: 62.5%;
+};
+
 * {
   box-sizing: border-box;
 }
 
-html, body {
-  //font-family: $font-primary;
-  font-size: 10px;//16px - default
-  //line-height: 2.2rem;
-  //color: $font-color;
-  //background-color: $body-background;
+body {
+  background-color: $black;
+  color: $white;
+  font-family: 'Josefin Sans', sans-serif;
 }
 
-// FOR CHECKBOX
-//.hidden {
-//  display: none;
-//}
-
+.app {
+  background-image: url("assets/bg-desktop-dark.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  height: 20rem;
+}
 
 .container {
   margin: 0 auto;
-  //padding: 0 1.5rem;
-  //width: $containerWidth;
+  width: 86.7%;
+  max-width: 375px;
 }
 
-a {
-  text-decoration: none;
-  //color: $color-white;
+input, button {
+  font-size: 1.2rem;
+  background-color: $main-bg;
+  border: none;
+  padding: 1.5em 0;
 }
-
-//h1 {
-//  font-size: ;
-//
-//}
-
-//h2 {
-//  font-size: ;
-//
-//}
-
-//p {
-//  font-family: $font-secondary;
-//
-//}
