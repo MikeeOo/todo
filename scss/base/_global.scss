@@ -6,12 +6,15 @@
 
 * {
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 body {
   background-color: $black;
   color: $white;
   font-family: 'Josefin Sans', sans-serif;
+  font-size: 1.2rem;
 }
 
 .app {
@@ -24,13 +27,87 @@ body {
 
 .container {
   margin: 0 auto;
-  width: 86.7%;
   max-width: 375px;
+  width: 86.7%;
 }
 
-input, button {
-  font-size: 1.2rem;
+.header {
+  font-size: 2rem;
+  font-weight: 700;
+  padding-top: 4.8rem;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  padding-top: 4rem;
+}
+
+input[type="text"], button{
+  padding: 1.5em 0;
+  font: inherit;
   background-color: $main-bg;
   border: none;
-  padding: 1.5em 0;
+  color: white;
 }
+
+.task_checker {
+  background-color: $main-bg;
+  height: 4.8rem;
+  display: flex;
+  align-items: center;
+  padding: 0 1.2rem 0 2rem;
+  border-radius: 5px 0 0 5px;
+}
+
+.checkbox {
+  background-color: $main-bg;
+  display: flex;
+  border: 2px solid #393A4B;
+  border-radius: 50%;
+  position: relative;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: $main-bg;
+
+  &:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+}
+
+input[type="checkbox"] {
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  opacity: 0;
+
+  &:checked ~ .checkmark {
+    background-color: rgba(87, 222, 255, 1);
+    background-image: linear-gradient(135deg, rgba(87, 222, 255, 1) 0%, rgba(192, 89, 243, 1) 100%);
+    &:after {
+      display: block;
+    }
+  }
+}
+
+.checkmark:after {
+  left: 30%;
+  top: 13%;
+  width: 0.5rem;
+  height: 1rem;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
