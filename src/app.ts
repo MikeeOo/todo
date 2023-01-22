@@ -81,6 +81,6 @@ class TodoApp {
 }
 
 // new TodoApp();
-const app: TodoApp = new TodoApp(`http://localhost:9999`);
+const app: ITodoApp = new TodoApp(`http://localhost:9999`);
 
 console.log(app);
