@@ -19,7 +19,7 @@ export default class FetchUtils {
         endpoint: string,
         body: ITask,
         headers: HeadersInit | undefined = {"Content-Type": "application/json"}
-        ): Promise<ITask> => {
+    ): Promise<ITask> => {
 
         return (await fetch(`${this.baseUrl}/${endpoint}`, {
             method: "POST",
@@ -28,4 +28,3 @@ export default class FetchUtils {
         })).json()
     }
 }
-

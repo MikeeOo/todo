@@ -1,6 +1,7 @@
 import "../scss/main.scss"
 import FetchUtils from "./FetchUtils";
 import {ITask} from "./FetchUtils";
+import HtmlUtils from "./HtmlUtils";
 
 interface ITodoApp {
     elements: IElements;
@@ -58,11 +59,11 @@ class TodoApp {
     };
 
     createTaskListItem = (task: ITask): void => {
+        const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {className: `tasks_list__task_item`})
 
-        const taskDiv: HTMLLIElement = document.createElement(`li`)
-        taskDiv.innerText = task.taskName
-        taskDiv.className = `taskLi`
-        this.elements.tasksList.appendChild(taskDiv)
+        listItem.innerText = task.taskName;
+
+        this.elements.tasksList.appendChild(listItem);
     }
 
     setEvents(): void {
@@ -71,6 +72,6 @@ class TodoApp {
 }
 
 // new TodoApp();
-const app: ITodoApp = new TodoApp(`http://localhost:8000`);
+const app: ITodoApp = new TodoApp(`http://localhost:9999`);
 
 console.log(app);
