@@ -1,0 +1,14 @@
+.fa-arrow-up-right-from-square, .fa-xmark {
+  display: block;
+  color: #393A4B;
+  font-size: 1.6rem;
+  padding: 1em 1.25em;
+
+  &:hover {
+    color: $white;
+  }
+}
+
+.fa-arrow-up-right-from-square {
+  transform: rotate(135deg);
+}

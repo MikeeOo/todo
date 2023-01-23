@@ -26,24 +26,27 @@
       <h1>T O D O</h1>
     </header>
 
-    <form action="" id="task_form" class="container">
+    <form class="container" action="" id="task_form">
 
-      <div class="task_checker">
+      <div class="checkbox">
 
-        <label for="check" class="checkbox">
-          <input id="check" type="checkbox">
-          <span class="checkmark"></span>
+        <label class="checkbox__label" for="checkbox">
+
+          <input class="checkbox__default" id="checkbox" type="checkbox">
+          <span class="checkbox__custom"></span>
         </label>
       </div>
 
-      <label for="task_form__input">
-        <input type="text" id="task_form__input" placeholder="Create a new todo..."/>
+      <label class="task_form__input_label" for="task_form__input" >
+
+        <input id="task_form__input"
+               type="text"
+               placeholder="Create a new todo..."/>
       </label>
 
-      <button type="submit">
+      <button type="submit" class="btn">
 
         <span class="fa-solid fa-arrow-up-right-from-square"></span>
-<!--        <span class="fa-brands fa-google-play"></span>-->
       </button>
     </form>
 

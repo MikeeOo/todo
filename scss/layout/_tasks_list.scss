@@ -1,0 +1,22 @@
+#tasks_list {
+  background-color: $main-bg;
+  border-radius: 5px;
+
+  .tasks_list__task_item {
+    display: flex;
+    color: white;
+    //background-color: rgba(0, 255, 0, .3);
+    //display: flex;
+    align-items: center;
+    border-bottom: 2px solid $gray;
+  }
+
+  .task {
+    background-color: $main-bg;
+    padding: 1.5em 0;
+    //width: 80%;
+    width: 100%;
+    max-width: 100%;
+    word-break: break-all;
+  }
+}

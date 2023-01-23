@@ -75,19 +75,19 @@ class TodoApp {
         const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks_list__task_item`});
 
         // custom checkBox
-        const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `checkbox`});
+        const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `checkbox__label`});
 
-        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task_checker`})).appendChild(checkBoxLabel);
+        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `checkbox`})).appendChild(checkBoxLabel);
 
-        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`input`, {type: `checkbox`}));
+        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`input`, {class: `checkbox__default`, type: `checkbox`}));
 
-        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `checkmark`}));
+        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `checkbox__custom`}));
 
         // taskName
-        listItem.appendChild(HtmlUtils.createHtmlElement(`span`, {text: task.taskName}));
+        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task`, text: task.taskName}));
 
         // deleteBtn
-        const deleteBtn: HTMLElement = HtmlUtils.createHtmlElement(`button`, {class: "delete_btn"});
+        const deleteBtn: HTMLElement = HtmlUtils.createHtmlElement(`button`, {class: "btn"});
 
         listItem.appendChild(deleteBtn).appendChild(HtmlUtils.createHtmlElement(`span`, {class: `fa-solid fa-xmark`}));
 

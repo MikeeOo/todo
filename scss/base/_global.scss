@@ -1,4 +1,5 @@
 @import "variables";
+@import "mixins";
 
 :root {
   font-size: 62.5%;
@@ -13,7 +14,11 @@ body {
   color: $white;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1.2rem;
-  //font-size: 1.8rem; desktop
+
+  @include desktop {
+    font-size: 1.8rem;
+    background-color: rgba(0, 0, 0, .8);
+  }
 }
 
 #app {
@@ -28,18 +33,8 @@ body {
   margin: 0 auto;
   max-width: 375px;
   width: 86.7%;
-}
+  //background-color: rgba(0, 255, 0, .3);
 
-.header {
-  font-size: 2rem;
-  font-weight: 700;
-  padding-top: 4.8rem;
-}
-
-form {
-  display: flex;
-  align-items: center;
-  padding-top: 4rem;
 }
 
 input[type="text"], button{
@@ -48,96 +43,4 @@ input[type="text"], button{
   background-color: $main-bg;
   border: none;
   color: white;
-}
-
-input[type="text"] {
-  padding: 1.5em 0;
-}
-
-.task_checker {
-  background-color: $main-bg;
-  height: 4.8rem;
-  display: flex;
-  align-items: center;
-  padding: 0 1.2rem 0 2rem;
-  border-radius: 5px 0 0 5px;
-}
-
-.checkbox {
-  background-color: $main-bg;
-  display: flex;
-  border: 2px solid #393A4B;
-  border-radius: 50%;
-  position: relative;
-}
-
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  cursor: pointer;
-  background-color: $main-bg;
-
-  &:after {
-    content: "";
-    position: absolute;
-    display: none;
-  }
-
-}
-
-input[type="checkbox"] {
-  width: 2rem;
-  height: 2rem;
-  cursor: pointer;
-  //opacity: 20%;
-
-  &:checked ~ .checkmark {
-    background-color: rgba(87, 222, 255, 1);
-    background-image: linear-gradient(135deg, rgba(87, 222, 255, 1) 0%, rgba(192, 89, 243, 1) 100%);
-    &:after {
-      display: block;
-    }
-  }
-}
-
-.checkmark:after {
-  left: 31%;
-  top: 13%;
-  width: 0.5rem;
-  height: 1rem;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
-}
-
-button:hover {
-  color: $white;
-}
-
-.fa-arrow-up-right-from-square, .fa-xmark {
-  display: block;
-  color: #393A4B;
-  font-size: 1.6rem;
-  padding: 1em 1.25em;
-
-  &:hover {
-    color: $white;
-  }
-}
-
-.fa-arrow-up-right-from-square {
-  transform: rotate(135deg);
-
-}
-
-.tasks_list__task_item {
-  color: white;
-  //background-color: rgba(0, 255, 0, .3);
-  display: flex;
-  align-items: center;
-  padding-top: 1rem;
 }
