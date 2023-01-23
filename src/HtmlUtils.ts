@@ -1,25 +1,40 @@
 interface IOptions {
-    className?: string;
+    class?: string;
     type?: string;
-    innerText?: string;
-    innerHTML?: string;
+    text? : string;
+    // innerText?: string;
+    // innerHTML?: string;
 }
-
-type HTMLElements = HTMLLIElement | HTMLInputElement | HTMLButtonElement ;
 
 export default class HtmlUtils {
 
     static createHtmlElement = (selector: string, options: IOptions): HTMLElement => {
 
-        const el: HTMLElements = <HTMLElements>document.createElement(selector);
+        const el: HTMLElement = document.createElement(selector);
 
-        // console.log(el)
-        for (const option in options){
-            // console.log(option)
-            // console.log(options)
-            el[<keyof IOptions>option] = options[<keyof IOptions>option] as string;
+        for (const [option, value] of Object.entries(options)) {
+            option === `text` ? el.textContent = value : el.setAttribute(option, value);
         }
-
+        // console.log(el)
         return el;
-    }
-}
+    };
+};
+
+// type HTMLElements = HTMLLIElement | HTMLInputElement | HTMLButtonElement ;
+//
+// export default class HtmlUtils {
+//
+//     static createHtmlElement = (selector: string, options: IOptions): HTMLElement => {
+//
+//         const el: HTMLElements = <HTMLElements>document.createElement(selector);
+//
+//         console.log(el)
+//         for (const option in options){
+//             // console.log(option)
+//             // console.log(options)
+//             el[<keyof IOptions>option] = options[<keyof IOptions>option] as string;
+//         }
+//
+//         return el;
+//     }
+// }

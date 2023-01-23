@@ -54,23 +54,44 @@ class TodoApp {
         this.createTasksListItem(task);
     };
 
+    // createTasksListItem = (task: ITask): void => {
+    //
+    //     const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {className: `tasks_list__task_item`});
+    //
+    //         const checkBoxLabel = HtmlUtils.createHtmlElement(`label`, {className: `checkbox`});
+    //
+    //     listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {className: `task_checker`}))
+    //             .appendChild(checkBoxLabel);
+    //
+    //             checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`input`, {type: `checkbox`}));
+    //
+    //             checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {className: `checkmark`}));
+    //
+    //     listItem.appendChild(HtmlUtils.createHtmlElement(`span`, {innerText: task.taskName}));
+    //
+    //     listItem.appendChild(HtmlUtils.createHtmlElement(`button`, {}))
+    //             .appendChild(HtmlUtils.createHtmlElement(`span`, {className: `fa-solid fa-plus`}));
+    //
+    //     this.elements.tasksList.appendChild(listItem);
+    // };
+
     createTasksListItem = (task: ITask): void => {
 
-        const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {className: `tasks_list__task_item`});
+        const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks_list__task_item`});
 
-            const checkBoxLabel = HtmlUtils.createHtmlElement(`label`, {className: `checkbox`});
+        const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `checkbox`});
 
-        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {className: `task_checker`}))
-                .appendChild(checkBoxLabel);
+        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task_checker`}))
+            .appendChild(checkBoxLabel);
 
-                checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`input`, {type: `checkbox`}));
+        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`input`, {type: `checkbox`}));
 
-                checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {className: `checkmark`}));
+        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `checkmark`}));
 
-        listItem.appendChild(HtmlUtils.createHtmlElement(`span`, {innerText: task.taskName}));
+        listItem.appendChild(HtmlUtils.createHtmlElement(`span`, {text: task.taskName}));
 
         listItem.appendChild(HtmlUtils.createHtmlElement(`button`, {}))
-                .appendChild(HtmlUtils.createHtmlElement(`span`, {className: `fa-solid fa-plus`}));
+            .appendChild(HtmlUtils.createHtmlElement(`span`, {class: `fa-solid fa-plus`}));
 
         this.elements.tasksList.appendChild(listItem);
     };
@@ -81,6 +102,6 @@ class TodoApp {
 }
 
 // new TodoApp();
-const app: ITodoApp = new TodoApp(`http://localhost:9999`);
+const app: ITodoApp = new TodoApp(`http://localhost:0666`);
 
 console.log(app);

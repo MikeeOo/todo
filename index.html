@@ -19,38 +19,36 @@
 </head>
 <body>
 
-<div id="app">
+  <div id="app">
 
-  <header class="header container">
+    <header class="header container">
 
-    <h1>T O D O</h1>
-  </header>
+      <h1>T O D O</h1>
+    </header>
 
-  <form action="" id="task_form" class="container">
+    <form action="" id="task_form" class="container">
 
-    <div class="task_checker">
+      <div class="task_checker">
 
-      <label for="check" class="checkbox">
-        <input id="check" type="checkbox">
-        <span class="checkmark"></span>
+        <label for="check" class="checkbox">
+          <input id="check" type="checkbox">
+          <span class="checkmark"></span>
+        </label>
+      </div>
+
+      <label for="task_form__input">
+        <input type="text" id="task_form__input" placeholder="Create a new todo..."/>
       </label>
-    </div>
 
+      <button type="submit">
 
-    <input type="text" id="task_form__input" placeholder="Create a new todo..."/>
+        <span class="fa-solid fa-plus"></span>
+      </button>
+    </form>
 
-    <button type="submit">
+    <ul id="tasks_list" class="container">
 
-      <span class="fa-solid fa-plus"></span>
-    </button>
-  </form>
-
-  <ul id="tasks_list" class="container">
-
-  </ul>
-
-
-
-</div>
+    </ul>
+  </div>
 </body>
 </html>
