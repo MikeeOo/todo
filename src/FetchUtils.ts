@@ -1,6 +1,6 @@
 export interface ITask {
     taskName: string;
-    id: number;
+    id?: number;
 }
 
 export default class FetchUtils {
@@ -12,8 +12,8 @@ export default class FetchUtils {
     };
 
     get = async (endpoint: string): Promise<Array<ITask>> => {
-        return (await fetch(`${this.baseUrl}/${endpoint}`)).json()
-    }
+        return (await fetch(`${this.baseUrl}/${endpoint}/`)).json();
+    };
 
     post = async (
         endpoint: string,
@@ -21,10 +21,14 @@ export default class FetchUtils {
         headers: HeadersInit | undefined = {"Content-Type": "application/json"}
     ): Promise<ITask> => {
 
-        return (await fetch(`${this.baseUrl}/${endpoint}`, {
+        return (await fetch(`${this.baseUrl}/${endpoint}/`, {
             method: "POST",
             headers: headers,
             body: JSON.stringify(body)
-        })).json()
-    }
+        })).json();
+    };
+
+    delete = async (endpoint: string): Promise<void> => {
+        await fetch(`${this.baseUrl}/${endpoint}/`, {method: "DELETE"});
+    };
 }

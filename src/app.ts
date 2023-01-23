@@ -3,12 +3,6 @@ import FetchUtils from "./FetchUtils";
 import {ITask} from "./FetchUtils";
 import HtmlUtils from "./HtmlUtils";
 
-interface ITodoApp {
-    elements: IElements;
-    addTaskToApi: (e: SubmitEvent) => void;
-    fetchUtils: IFetchUtils;
-}
-
 interface IElements {
     taskForm: HTMLFormElement;
     taskInput: HTMLInputElement;
@@ -17,8 +11,9 @@ interface IElements {
 
 interface IFetchUtils {
     baseUrl: string;
-    get: (endpoint: string) => Promise<any>;
-    post: (endpoint: string, body: any, headers?: HeadersInit | undefined) => Promise<any>;
+    get(endpoint: string): Promise<any>;
+    post(endpoint: string, body: ITask): Promise<ITask>;
+    delete(endpoint: string): Promise<void>;
 }
 
 class TodoApp {
@@ -79,21 +74,34 @@ class TodoApp {
 
         const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks_list__task_item`});
 
+        // custom checkBox
         const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `checkbox`});
 
-        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task_checker`}))
-            .appendChild(checkBoxLabel);
+        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task_checker`})).appendChild(checkBoxLabel);
 
         checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`input`, {type: `checkbox`}));
 
         checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `checkmark`}));
 
+        // taskName
         listItem.appendChild(HtmlUtils.createHtmlElement(`span`, {text: task.taskName}));
 
-        listItem.appendChild(HtmlUtils.createHtmlElement(`button`, {}))
-            .appendChild(HtmlUtils.createHtmlElement(`span`, {class: `fa-solid fa-plus`}));
+        // deleteBtn
+        const deleteBtn: HTMLElement = HtmlUtils.createHtmlElement(`button`, {class: "delete_btn"});
 
+        listItem.appendChild(deleteBtn).appendChild(HtmlUtils.createHtmlElement(`span`, {class: `fa-solid fa-xmark`}));
+
+        deleteBtn.addEventListener(`click`, (e: MouseEvent) => this.deleteTask(e, task));
+
+        // add list item to tasksList
         this.elements.tasksList.appendChild(listItem);
+    };
+
+    deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
+
+        (e.target as HTMLSpanElement)?.closest(`li`)?.remove();
+
+        await this.fetchUtils.delete(`tasks/${task.id}`);
     };
 
     setEvents(): void {
@@ -102,6 +110,6 @@ class TodoApp {
 }
 
 // new TodoApp();
-const app: ITodoApp = new TodoApp(`http://localhost:0666`);
+const app = new TodoApp(`http://localhost:0666`);
 
 console.log(app);
