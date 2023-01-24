@@ -14,6 +14,7 @@ interface IFetchUtils {
     baseUrl: string;
     get(endpoint: string): Promise<any>;
     post(endpoint: string, body: ITask): Promise<ITask>;
+    put(endpoint: string, body: ITask): Promise<ITask>;
     delete(endpoint: string): Promise<void>;
 }
 
@@ -34,7 +35,11 @@ class TodoApp {
         this.fetchUtils = new FetchUtils(url);
 
         this.getTasks().then((r: Array<ITask>) => {
-            this.tasksCounter(`init`, r.length);
+
+            const uncheckedTasks: Array<ITask> = r.filter((el: ITask) => !el.isChecked && el);
+            // console.log(uncheckedTasks.length)
+
+            this.tasksCounter(`init`, uncheckedTasks.length);
             return r.map((task: ITask) => this.createTasksListItem(task));
         })
         this.setEvents();
@@ -46,7 +51,8 @@ class TodoApp {
         e.preventDefault();
 
         const task: ITask = await this.fetchUtils.post(`tasks`, {
-            taskName: this.elements.taskInput.value
+            taskName: this.elements.taskInput.value,
+            isChecked: false
         });
 
         this.elements.taskForm.reset();
@@ -83,49 +89,88 @@ class TodoApp {
 
         const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks_list__task_item`});
 
-        // custom checkBox
+        // __CUSTOM__CHECKBOX___
+
         const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `checkbox__label`});
 
         listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `checkbox`})).appendChild(checkBoxLabel);
 
-        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`input`, {class: `checkbox__default`, type: `checkbox`}));
+        const checkBoxDefault: HTMLElement = HtmlUtils.createHtmlElement(`input`, {class: `checkbox__default`, type: `checkbox`, checked: task.isChecked})
+
+        checkBoxLabel.appendChild(checkBoxDefault);
 
         checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `checkbox__custom`}));
 
-        // taskName
-        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task`, text: task.taskName}));
+        // __TASK____NAME__
 
-        // deleteBtn
+        const taskContent: HTMLElement = HtmlUtils.createHtmlElement(`div`, {class: `task`, text: task.taskName})
+
+        listItem.appendChild(taskContent);
+
+        task.isChecked && taskContent.classList.add(`done`);
+
+        // __DELETE__BUTTON__
         const deleteBtn: HTMLElement = HtmlUtils.createHtmlElement(`button`, {class: "btn"});
 
         listItem.appendChild(deleteBtn).appendChild(HtmlUtils.createHtmlElement(`span`, {class: `fa-solid fa-xmark`}));
 
+        // EVENTS
+        // checkbox--event
+        checkBoxDefault.addEventListener('change', (e: Event) => this.handleCheckbox(e, task))
+        // delete_button--event
         deleteBtn.addEventListener(`click`, (e: MouseEvent) => this.deleteTask(e, task));
 
         // add list item to tasksList
         this.elements.tasksList.appendChild(listItem);
     };
 
+    handleCheckbox = async (e: Event, task: ITask): Promise<void> => {
+
+        await this.fetchUtils.put(`tasks/${task.id}`, {
+            taskName: task.taskName,
+            isChecked: (e.target as HTMLInputElement)?.checked
+        });
+
+        if ((e.target as HTMLInputElement)?.checked) {
+            const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
+
+            taskDone?.classList.add(`done`);
+
+            this.tasksCounter(`decrement`, 1);
+
+        } else {
+            const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
+
+            taskDone?.classList.remove(`done`);
+
+            this.tasksCounter(`increment`, 1);
+        }
+    }
+
     deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
 
         (e.target as HTMLSpanElement)?.closest(`li`)?.remove();
 
-        this.tasksCounter(`decrement`, 1);
+        // console.log(!task.isChecked)
+
+        // if (task.isChecked) {
+        //     this.tasksCounter(`decrement`, 1);
+        // }
+
+        // this.tasksAmount && this.tasksCounter(`decrement`, 1);
+
+        // task.isChecked && this.tasksCounter(`decrement`, 1);
 
         await this.fetchUtils.delete(`tasks/${task.id}`);
-
-        // await this.updateTasksListLength();
     };
 
     tasksCounter = (state: string, value: number): void => {
 
         if (state === `increment`) {
             this.tasksAmount += value;
-        }
-        else if (state === `decrement`) {
+        } else if (state === `decrement`) {
             this.tasksAmount -= value;
-        }
-        else {
+        } else if (state === `init`){
             this.tasksAmount = value;
         }
 
@@ -137,18 +182,6 @@ class TodoApp {
             this.elements.tasksLeft.innerText = ``;
         }
     }
-
-    // updateTasksListLength =  async (): Promise<void> => {
-        // const tasksList: Array<ITask> = await this.getTasks();
-        //
-        // if (tasksList.length > 1) {
-        //     this.elements.taskCounter.innerText = `${tasksList.length} items left`;
-        // } else if (tasksList.length === 1) {
-        //     this.elements.taskCounter.innerText = `${tasksList.length} item left`;
-        // } else {
-        //     this.elements.taskCounter.innerText = ``;
-        // }
-    // }
 
     setEvents(): void {
         this.elements.taskForm.addEventListener(`submit`, this.addTaskToApi);

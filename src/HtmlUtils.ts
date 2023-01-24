@@ -2,23 +2,30 @@ interface IOptions {
     class?: string;
     type?: string;
     text? : string;
+    checked?: boolean;
     // innerText?: string;
     // innerHTML?: string;
 }
 
 export default class HtmlUtils {
-
     static createHtmlElement = (selector: string, options: IOptions): HTMLElement => {
 
         const el: HTMLElement = document.createElement(selector);
 
         for (const [option, value] of Object.entries(options)) {
-            option === `text` ? el.textContent = value : el.setAttribute(option, value);
+
+            if (option === 'checked' && value) {
+
+                el.setAttribute(option, value);
+
+            } else if (option !== 'checked') {
+
+                option === `text` ? el.textContent = value : el.setAttribute(option, value);
+            }
         }
-        // console.log(el)
         return el;
-    };
-};
+    }
+}
 
 // type HTMLElements = HTMLLIElement | HTMLInputElement | HTMLButtonElement ;
 //
@@ -37,4 +44,11 @@ export default class HtmlUtils {
 //
 //         return el;
 //     }
+// }
+
+
+// if (option === 'checked' && value) {
+//     el.setAttribute(option, value);
+// } else if (option !== 'checked') {
+//     option === `text` ? el.textContent = value : el.setAttribute(option, value);
 // }
