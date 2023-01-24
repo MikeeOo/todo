@@ -1,4 +1,19 @@
+@import "scss/utils/variables";
+
 .btn {
-  border-radius: 0 5px 5px 0;
-  //display: none;
+  border-radius: 0 $rad $rad 0;
+
+  .fa-arrow-up-right-from-square, .fa-xmark {
+    display: block;
+    color: $el-grey;
+    padding: 1em 1.25em;
+
+    &:hover {
+      color: $el-main;
+    }
+  }
+
+  .fa-arrow-up-right-from-square {
+    transform: rotate(135deg);
+  }
 }

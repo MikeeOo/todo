@@ -1,23 +1,22 @@
-@import "variables";
-@import "mixins";
+@import "scss/utils/variables";
+@import "scss/utils/mixins";
 
 :root {
   font-size: 62.5%;
-};
+}
 
 * {
   box-sizing: border-box;
 }
 
 body {
-  background-color: $black;
-  color: $white;
+  background-color: $bg-main;
+  color: $el-main;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1.2rem;
 
   @include desktop {
     font-size: 1.8rem;
-    background-color: rgba(0, 0, 0, .8);
   }
 }
 
@@ -33,14 +32,16 @@ body {
   margin: 0 auto;
   max-width: 375px;
   width: 86.7%;
-  //background-color: rgba(0, 255, 0, .3);
 
+  @include desktop {
+    max-width: 540px;
+  }
 }
 
 input[type="text"], button{
   padding: 0;
   font: inherit;
-  background-color: $main-bg;
+  background-color: $bg-aux;
   border: none;
-  color: white;
+  color: $el-main;
 }
