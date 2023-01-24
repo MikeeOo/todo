@@ -5,7 +5,7 @@ export interface ITask {
 
 export default class FetchUtils {
 
-    public baseUrl: string;
+    baseUrl: string;
 
     constructor(url: string) {
         this.baseUrl = url;

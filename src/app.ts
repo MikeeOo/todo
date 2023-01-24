@@ -7,6 +7,7 @@ interface IElements {
     taskForm: HTMLFormElement;
     taskInput: HTMLInputElement;
     tasksList: HTMLElement;
+    tasksLeft: HTMLSpanElement;
 }
 
 interface IFetchUtils {
@@ -17,19 +18,25 @@ interface IFetchUtils {
 }
 
 class TodoApp {
-    public fetchUtils: IFetchUtils;
+
+    fetchUtils: IFetchUtils;
+
+    tasksAmount: number = 0;
 
     elements: IElements = {
         taskForm: <HTMLFormElement>document.getElementById(`task_form`),
         taskInput: <HTMLInputElement>document.getElementById(`task_form__input`),
         tasksList: <HTMLUListElement>document.getElementById(`tasks_list`),
+        tasksLeft: <HTMLSpanElement>document.getElementById(`tasks_left`)
     };
 
     constructor(url: string) {
         this.fetchUtils = new FetchUtils(url);
 
-        this.getTasks().then((r: Array<ITask>) => r.map((task: ITask) => this.createTasksListItem(task)));
-        // this.getTasks().then(r => console.log(r));
+        this.getTasks().then((r: Array<ITask>) => {
+            this.tasksCounter(`init`, r.length);
+            return r.map((task: ITask) => this.createTasksListItem(task));
+        })
         this.setEvents();
     };
 
@@ -38,13 +45,15 @@ class TodoApp {
     addTaskToApi = async (e: SubmitEvent): Promise<void> => {
         e.preventDefault();
 
-        const task = await this.fetchUtils.post(`tasks`, {
+        const task: ITask = await this.fetchUtils.post(`tasks`, {
             taskName: this.elements.taskInput.value
         });
 
-        console.log(task);
-
         this.elements.taskForm.reset();
+
+        // await this.updateTasksListLength();
+
+        this.tasksCounter(`increment`, 1);
 
         this.createTasksListItem(task);
     };
@@ -101,8 +110,45 @@ class TodoApp {
 
         (e.target as HTMLSpanElement)?.closest(`li`)?.remove();
 
+        this.tasksCounter(`decrement`, 1);
+
         await this.fetchUtils.delete(`tasks/${task.id}`);
+
+        // await this.updateTasksListLength();
     };
+
+    tasksCounter = (state: string, value: number): void => {
+
+        if (state === `increment`) {
+            this.tasksAmount += value;
+        }
+        else if (state === `decrement`) {
+            this.tasksAmount -= value;
+        }
+        else {
+            this.tasksAmount = value;
+        }
+
+        if (this.tasksAmount > 1) {
+            this.elements.tasksLeft.innerText = `${this.tasksAmount} items left`;
+        } else if (this.tasksAmount === 1) {
+            this.elements.tasksLeft.innerText = `${this.tasksAmount} item left`;
+        } else {
+            this.elements.tasksLeft.innerText = ``;
+        }
+    }
+
+    // updateTasksListLength =  async (): Promise<void> => {
+        // const tasksList: Array<ITask> = await this.getTasks();
+        //
+        // if (tasksList.length > 1) {
+        //     this.elements.taskCounter.innerText = `${tasksList.length} items left`;
+        // } else if (tasksList.length === 1) {
+        //     this.elements.taskCounter.innerText = `${tasksList.length} item left`;
+        // } else {
+        //     this.elements.taskCounter.innerText = ``;
+        // }
+    // }
 
     setEvents(): void {
         this.elements.taskForm.addEventListener(`submit`, this.addTaskToApi);
