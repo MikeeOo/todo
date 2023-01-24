@@ -1,7 +1,7 @@
 export interface ITask {
     taskName: string;
     id?: number;
-    isChecked?: boolean | undefined;
+    isChecked?: boolean;
 }
 
 export default class FetchUtils {
@@ -41,7 +41,6 @@ export default class FetchUtils {
             body: JSON.stringify(body)
         })).json();
     };
-
 
     delete = async (endpoint: string): Promise<void> => {
         await fetch(`${this.baseUrl}/${endpoint}/`, {method: "DELETE"});

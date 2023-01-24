@@ -45,13 +45,11 @@ input[type="text"], button{
   border: none;
   color: $el-main;
   &::placeholder {
-    //font-size: 10rem;
     color: $text-dim;
   }
 }
 
 .done {
-  text-decoration: line-through;
-  color: $text-dim;
-  background-color: red;
+  text-decoration: line-through $text-dim;
+  color: $text-dim !important;
 }

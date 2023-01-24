@@ -5,6 +5,7 @@ import HtmlUtils from "./HtmlUtils";
 
 interface IElements {
     taskForm: HTMLFormElement;
+    taskCheckbox: HTMLInputElement;
     taskInput: HTMLInputElement;
     tasksList: HTMLElement;
     tasksLeft: HTMLSpanElement;
@@ -22,10 +23,11 @@ class TodoApp {
 
     fetchUtils: IFetchUtils;
 
-    tasksAmount: number = 0;
+    tasksAmount: Array<string> = [];
 
     elements: IElements = {
         taskForm: <HTMLFormElement>document.getElementById(`task_form`),
+        taskCheckbox: <HTMLInputElement>document.getElementById(`task_checkbox`),
         taskInput: <HTMLInputElement>document.getElementById(`task_form__input`),
         tasksList: <HTMLUListElement>document.getElementById(`tasks_list`),
         tasksLeft: <HTMLSpanElement>document.getElementById(`tasks_left`)
@@ -36,12 +38,13 @@ class TodoApp {
 
         this.getTasks().then((r: Array<ITask>) => {
 
-            const uncheckedTasks: Array<ITask> = r.filter((el: ITask) => !el.isChecked && el);
-            // console.log(uncheckedTasks.length)
+            // const uncheckedTasks: Array<ITask> = r.filter((el: ITask) => !el.isChecked && el);
 
-            this.tasksCounter(`init`, uncheckedTasks.length);
+            this.tasksCounter(`init`, r.filter((el: ITask) => !el.isChecked && el).length);
+
             return r.map((task: ITask) => this.createTasksListItem(task));
-        })
+        });
+
         this.setEvents();
     };
 
@@ -50,19 +53,24 @@ class TodoApp {
     addTaskToApi = async (e: SubmitEvent): Promise<void> => {
         e.preventDefault();
 
-        const task: ITask = await this.fetchUtils.post(`tasks`, {
-            taskName: this.elements.taskInput.value,
-            isChecked: false
-        });
+        if (this.elements.taskInput.value.length > 43 || this.elements.taskInput.value.length === 0) {
+            console.log(`xd`);
+        } else {
 
-        this.elements.taskForm.reset();
+            const task: ITask = await this.fetchUtils.post(`tasks`, {
+                taskName: this.elements.taskInput.value,
+                isChecked: this.elements.taskCheckbox.checked
+            });
 
-        // await this.updateTasksListLength();
+            !this.elements.taskCheckbox.checked && this.tasksCounter(`increment`);
 
-        this.tasksCounter(`increment`, 1);
+            this.elements.taskInput.value = ``;
 
-        this.createTasksListItem(task);
+            this.createTasksListItem(task);
+        }
     };
+
+    addCheckedTask = (e: Event): void => (e.target as HTMLInputElement)?.checked ? this.elements.taskInput?.classList.add(`done`) : this.elements.taskInput?.classList.remove(`done`);
 
     // createTasksListItem = (task: ITask): void => {
     //
@@ -90,7 +98,6 @@ class TodoApp {
         const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks_list__task_item`});
 
         // __CUSTOM__CHECKBOX___
-
         const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `checkbox__label`});
 
         listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `checkbox`})).appendChild(checkBoxLabel);
@@ -102,7 +109,6 @@ class TodoApp {
         checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `checkbox__custom`}));
 
         // __TASK____NAME__
-
         const taskContent: HTMLElement = HtmlUtils.createHtmlElement(`div`, {class: `task`, text: task.taskName})
 
         listItem.appendChild(taskContent);
@@ -136,55 +142,49 @@ class TodoApp {
 
             taskDone?.classList.add(`done`);
 
-            this.tasksCounter(`decrement`, 1);
-
+            this.tasksCounter(`decrement`);
         } else {
             const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
 
             taskDone?.classList.remove(`done`);
 
-            this.tasksCounter(`increment`, 1);
+            this.tasksCounter(`increment`);
         }
-    }
+    };
 
     deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
 
         (e.target as HTMLSpanElement)?.closest(`li`)?.remove();
 
-        // console.log(!task.isChecked)
+        const taskDone: HTMLElement = (e.target as HTMLSpanElement)?.closest(`li`)?.childNodes[1] as HTMLElement;
 
-        // if (task.isChecked) {
-        //     this.tasksCounter(`decrement`, 1);
-        // }
-
-        // this.tasksAmount && this.tasksCounter(`decrement`, 1);
-
-        // task.isChecked && this.tasksCounter(`decrement`, 1);
+        taskDone.classList[1] !== `done` && this.tasksCounter(`decrement`, 1);
 
         await this.fetchUtils.delete(`tasks/${task.id}`);
     };
 
-    tasksCounter = (state: string, value: number): void => {
+    tasksCounter = (state: string, value: number | undefined = 0): void => {
 
         if (state === `increment`) {
-            this.tasksAmount += value;
+            this.tasksAmount.push(`🍄`);
         } else if (state === `decrement`) {
-            this.tasksAmount -= value;
-        } else if (state === `init`){
-            this.tasksAmount = value;
+            this.tasksAmount.splice(-1,1);
+        }  else if (state === `init`){
+            this.tasksAmount = new Array<string>(value).fill(`🍄`);
         }
 
-        if (this.tasksAmount > 1) {
-            this.elements.tasksLeft.innerText = `${this.tasksAmount} items left`;
-        } else if (this.tasksAmount === 1) {
-            this.elements.tasksLeft.innerText = `${this.tasksAmount} item left`;
+        if (this.tasksAmount.length > 1) {
+            this.elements.tasksLeft.innerText = `${this.tasksAmount.length} items left`;
+        } else if (this.tasksAmount.length === 1) {
+            this.elements.tasksLeft.innerText = `${this.tasksAmount.length} item left`;
         } else {
             this.elements.tasksLeft.innerText = ``;
         }
-    }
+    };
 
     setEvents(): void {
         this.elements.taskForm.addEventListener(`submit`, this.addTaskToApi);
+        this.elements.taskCheckbox.addEventListener(`change`, this.addCheckedTask);
     };
 }
 
@@ -192,3 +192,13 @@ class TodoApp {
 const app = new TodoApp(`http://localhost:0666`);
 
 console.log(app);
+
+// console.log(!task.isChecked)
+
+// if (task.isChecked) {
+//     this.tasksCounter(`decrement`, 1);
+// }
+
+// this.tasksAmount && this.tasksCounter(`decrement`, 1);
+
+// task.isChecked && this.tasksCounter(`decrement`, 1);

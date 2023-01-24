@@ -15,11 +15,8 @@ export default class HtmlUtils {
         for (const [option, value] of Object.entries(options)) {
 
             if (option === 'checked' && value) {
-
                 el.setAttribute(option, value);
-
             } else if (option !== 'checked') {
-
                 option === `text` ? el.textContent = value : el.setAttribute(option, value);
             }
         }
