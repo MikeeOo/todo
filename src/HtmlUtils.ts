@@ -3,6 +3,9 @@ interface IOptions {
     type?: string;
     text? : string;
     checked?: boolean;
+    data?: {
+        [key: string]: string
+    };
     // innerText?: string;
     // innerHTML?: string;
 }
@@ -13,17 +16,22 @@ export default class HtmlUtils {
         const el: HTMLElement = document.createElement(selector);
 
         for (const [option, value] of Object.entries(options)) {
-
             if (option === 'checked' && value) {
                 el.setAttribute(option, value);
-            } else if (option !== 'checked') {
+            } else if (option !== 'checked' && option !== 'data') {
                 option === `text` ? el.textContent = value : el.setAttribute(option, value);
             }
         }
+
+        if (options.data) {
+            for (const [dataKey, dataValue] of Object.entries(options.data)) {
+                el.setAttribute(`data-${dataKey}`, dataValue);
+            }
+        }
+
         return el;
     }
 }
-
 // type HTMLElements = HTMLLIElement | HTMLInputElement | HTMLButtonElement ;
 //
 // export default class HtmlUtils {

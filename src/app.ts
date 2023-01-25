@@ -9,6 +9,7 @@ interface IElements {
     taskInput: HTMLInputElement;
     tasksList: HTMLElement;
     tasksLeft: HTMLSpanElement;
+    tasksClear: HTMLButtonElement;
 }
 
 interface IFetchUtils {
@@ -24,13 +25,15 @@ class TodoApp {
     fetchUtils: IFetchUtils;
 
     tasksAmount: Array<string> = [];
+    xd: number = 0;
 
     elements: IElements = {
         taskForm: <HTMLFormElement>document.getElementById(`task_form`),
         taskCheckbox: <HTMLInputElement>document.getElementById(`task_checkbox`),
         taskInput: <HTMLInputElement>document.getElementById(`task_form__input`),
         tasksList: <HTMLUListElement>document.getElementById(`tasks_list`),
-        tasksLeft: <HTMLSpanElement>document.getElementById(`tasks_left`)
+        tasksLeft: <HTMLSpanElement>document.getElementById(`tasks_left`),
+        tasksClear: <HTMLButtonElement>document.getElementById(`tasks_clear`),
     };
 
     constructor(url: string) {
@@ -54,9 +57,8 @@ class TodoApp {
         e.preventDefault();
 
         if (this.elements.taskInput.value.length > 43 || this.elements.taskInput.value.length === 0) {
-            console.log(`xd`);
+            // console.log(`xd`);
         } else {
-
             const task: ITask = await this.fetchUtils.post(`tasks`, {
                 taskName: this.elements.taskInput.value,
                 isChecked: this.elements.taskCheckbox.checked
@@ -102,7 +104,7 @@ class TodoApp {
 
         listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `checkbox`})).appendChild(checkBoxLabel);
 
-        const checkBoxDefault: HTMLElement = HtmlUtils.createHtmlElement(`input`, {class: `checkbox__default`, type: `checkbox`, checked: task.isChecked})
+        const checkBoxDefault: HTMLElement = HtmlUtils.createHtmlElement(`input`, {class: `checkbox__default`, type: `checkbox`, checked: task.isChecked, data: {"task-id": `${task.id}`}});
 
         checkBoxLabel.appendChild(checkBoxDefault);
 
@@ -122,7 +124,7 @@ class TodoApp {
 
         // EVENTS
         // checkbox--event
-        checkBoxDefault.addEventListener('change', (e: Event) => this.handleCheckbox(e, task))
+        checkBoxDefault.addEventListener('change', (e: Event) => this.handleCheckbox(e, task));
         // delete_button--event
         deleteBtn.addEventListener(`click`, (e: MouseEvent) => this.deleteTask(e, task));
 
@@ -142,11 +144,16 @@ class TodoApp {
 
             taskDone?.classList.add(`done`);
 
+            // this.elements.tasksClear.classList.remove(`hidden`)
+
             this.tasksCounter(`decrement`);
         } else {
             const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
 
             taskDone?.classList.remove(`done`);
+
+            // this.elements.tasksClear.classList.add(`hidden`)
+
 
             this.tasksCounter(`increment`);
         }
@@ -180,25 +187,56 @@ class TodoApp {
         } else {
             this.elements.tasksLeft.innerText = ``;
         }
+
+        // dokończ logikę przełączania widoczności buttona
+        // console.log(this.elements.tasksList.getElementsByTagName(`li`).length === this.tasksAmount.length)
+        // console.log(this.elements.tasksList.getElementsByTagName(`li`).length === this.tasksAmount.length)
+        //
+        // if (this.tasksAmount.length === this.elements.tasksList.getElementsByTagName(`li`).length) {
+        //     this.elements.tasksClear.classList.add(`hidden`)
+        // } else if (this.elements.tasksList.getElementsByTagName(`li`).length === 0) {
+        //     this.elements.tasksClear.classList.add(`hidden`)
+        // } else {
+        //     this.elements.tasksClear.classList.remove(`hidden`)
+        // }
+
+        // może zrób oddzielną metodę ta te dynksy widoczność buttonów też możesz ogarnąć
     };
+
+    handleTasksClear = (): void => {
+        this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).forEach((checkedItem: Element, index: number) => {
+
+            checkedItem.closest(`li`)?.remove();
+            setTimeout(async (): Promise<void> => {
+
+                await this.fetchUtils.delete(`tasks/${checkedItem.getAttribute('data-task-id')}`);
+            }, 100 * index);
+        });
+    }
 
     setEvents(): void {
         this.elements.taskForm.addEventListener(`submit`, this.addTaskToApi);
         this.elements.taskCheckbox.addEventListener(`change`, this.addCheckedTask);
+        this.elements.tasksClear.addEventListener(`click`, this.handleTasksClear);
     };
 }
 
-// new TodoApp();
 const app = new TodoApp(`http://localhost:0666`);
 
 console.log(app);
 
+// new TodoApp();
 // console.log(!task.isChecked)
-
 // if (task.isChecked) {
 //     this.tasksCounter(`decrement`, 1);
 // }
-
 // this.tasksAmount && this.tasksCounter(`decrement`, 1);
-
 // task.isChecked && this.tasksCounter(`decrement`, 1);
+
+// // console.log(taskDone.classList[1] !== `done`)
+// // console.log(this.elements.tasksClear)
+//
+//
+// if (taskDone.classList[1] === `done`) {
+//     this.elements.tasksClear.innerText = ``
+// }

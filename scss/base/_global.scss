@@ -53,3 +53,26 @@ input[type="text"], button{
   text-decoration: line-through $text-dim;
   color: $text-dim !important;
 }
+
+.hidden {
+  display: none;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+.aaa {
+  background-color: rgba(111, 0, 255, 0.5);
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem 0;
+}
+
+.bbb {
+  /*background-color: greenyellow;*/
+  display: flex;
+  justify-content: space-evenly;
+  /*width: 86%;*/
+  /*max-width: 50%;*/
+  padding: 1em 2em;
+  background-color: rgba(255, 255, 0, 0.4);
+}
