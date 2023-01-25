@@ -10,6 +10,7 @@ interface IElements {
     tasksList: HTMLElement;
     tasksLeft: HTMLSpanElement;
     tasksClear: HTMLButtonElement;
+    tasksFilters: NodeListOf<HTMLButtonElement>;
 }
 
 interface IFetchUtils {
@@ -34,6 +35,7 @@ class TodoApp {
         tasksList: <HTMLUListElement>document.getElementById(`tasks_list`),
         tasksLeft: <HTMLSpanElement>document.getElementById(`tasks_left`),
         tasksClear: <HTMLButtonElement>document.getElementById(`tasks_clear`),
+        tasksFilters: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`)
     };
 
     constructor(url: string) {
@@ -72,7 +74,7 @@ class TodoApp {
         }
     };
 
-    addCheckedTask = (e: Event): void => (e.target as HTMLInputElement)?.checked ? this.elements.taskInput?.classList.add(`done`) : this.elements.taskInput?.classList.remove(`done`);
+    addCheckedTask = (e: Event): void => (e.target as HTMLInputElement).checked ? this.elements.taskInput.classList.add(`done`) : this.elements.taskInput.classList.remove(`done`);
 
     // createTasksListItem = (task: ITask): void => {
     //
@@ -136,10 +138,10 @@ class TodoApp {
 
         await this.fetchUtils.put(`tasks/${task.id}`, {
             taskName: task.taskName,
-            isChecked: (e.target as HTMLInputElement)?.checked
+            isChecked: (e.target as HTMLInputElement).checked
         });
 
-        if ((e.target as HTMLInputElement)?.checked) {
+        if ((e.target as HTMLInputElement).checked) {
             const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
 
             taskDone?.classList.add(`done`);
@@ -161,9 +163,9 @@ class TodoApp {
 
     deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
 
-        (e.target as HTMLSpanElement)?.closest(`li`)?.remove();
+        (e.target as HTMLSpanElement).closest(`li`)?.remove();
 
-        const taskDone: HTMLElement = (e.target as HTMLSpanElement)?.closest(`li`)?.childNodes[1] as HTMLElement;
+        const taskDone: HTMLElement = (e.target as HTMLSpanElement).closest(`li`)?.childNodes[1] as HTMLElement;
 
         taskDone.classList[1] !== `done` && this.tasksCounter(`decrement`, 1);
 
@@ -188,6 +190,7 @@ class TodoApp {
             this.elements.tasksLeft.innerText = ``;
         }
 
+        console.log(this.elements.tasksFilters)
         // dokończ logikę przełączania widoczności buttona
         // console.log(this.elements.tasksList.getElementsByTagName(`li`).length === this.tasksAmount.length)
         // console.log(this.elements.tasksList.getElementsByTagName(`li`).length === this.tasksAmount.length)
@@ -214,10 +217,26 @@ class TodoApp {
         });
     }
 
+    handleTasksFilter = (e: MouseEvent): void => {
+
+        this.elements.tasksList.querySelectorAll(`li`).forEach(taskListItem => {
+            if((e.target as HTMLButtonElement).dataset.filter === 'all'){
+                taskListItem.style.display = 'flex';
+            }
+            else if((e.target as HTMLButtonElement).dataset.filter === "active"){
+                taskListItem.style.display = taskListItem.querySelector('input[type="checkbox"]:checked') ? "none" : "flex";
+            }
+            else if((e.target as HTMLButtonElement).dataset.filter === "completed"){
+                taskListItem.style.display = taskListItem.querySelector('input[type="checkbox"]:checked') ? "flex" : "none";
+            }
+        });
+    }
+
     setEvents(): void {
         this.elements.taskForm.addEventListener(`submit`, this.addTaskToApi);
         this.elements.taskCheckbox.addEventListener(`change`, this.addCheckedTask);
         this.elements.tasksClear.addEventListener(`click`, this.handleTasksClear);
+        this.elements.tasksFilters.forEach((filterBtn: HTMLButtonElement) => filterBtn.addEventListener(`click`, this.handleTasksFilter));
     };
 }
 
