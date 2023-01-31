@@ -7,10 +7,12 @@ interface IElements {
     taskForm: HTMLFormElement;
     taskCheckbox: HTMLInputElement;
     taskInput: HTMLInputElement;
+    tasks: HTMLDivElement;
     tasksList: HTMLElement;
     tasksLeft: HTMLSpanElement;
     tasksClear: HTMLButtonElement;
-    tasksFilters: NodeListOf<HTMLButtonElement>;
+    tasksFilterWrapper: HTMLDivElement;
+    tasksFilterButtons: NodeListOf<HTMLButtonElement>;
 }
 
 interface IFetchUtils {
@@ -29,10 +31,12 @@ class TodoApp {
         taskForm: <HTMLFormElement>document.getElementById(`task_form`),
         taskCheckbox: <HTMLInputElement>document.getElementById(`task_checkbox`),
         taskInput: <HTMLInputElement>document.getElementById(`task_form__input`),
+        tasks: <HTMLDivElement>document.querySelector(`.tasks`),
         tasksList: <HTMLUListElement>document.querySelector(`.tasks__list`),
         tasksLeft: <HTMLSpanElement>document.querySelector(`.tasks__counter_left`),
         tasksClear: <HTMLButtonElement>document.querySelector(`.tasks__counter_clear`),
-        tasksFilters: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`)
+        tasksFilterWrapper: <HTMLDivElement>document.body.querySelector(`.tasks__filter_wrapper`),
+        tasksFilterButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`)
     };
 
     constructor(url: string) {
@@ -41,6 +45,7 @@ class TodoApp {
         this.getTasks().then((r: Array<ITask>): void => {
 
             r.map((task: ITask) => this.createTasksListItem(task));
+
             this.tasksCounter();
         });
 
@@ -122,6 +127,7 @@ class TodoApp {
             // this.elements.tasksClear.classList.remove(`hidden`)
 
             this.tasksCounter();
+
         } else {
             const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
 
@@ -135,27 +141,49 @@ class TodoApp {
 
     deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
 
-        (e.target as HTMLSpanElement).closest(`li`)?.remove();
-        // TUTAJ MOŻESZ PODAĆ KLASĘ TEGO LI
-
-        const taskDone: HTMLElement = (e.target as HTMLSpanElement).closest(`li`)?.childNodes[1] as HTMLElement;
+        (e.target as HTMLSpanElement).closest(`.tasks__list_item`)?.remove();
+        // const taskDone: HTMLElement = (e.target as HTMLSpanElement).closest(`li`)?.childNodes[1] as HTMLElement;
         // TUTAJ POLEĆ QUERY SELECTOREM TUTAJ TEŻ KLASĘ SPANA
+        // taskDone.classList[1] !== `done` && this.tasksCounter();
 
-        taskDone.classList[1] !== `done` && this.tasksCounter();
+        this.tasksCounter();
 
         await this.fetchUtils.delete(`tasks/${task.id}`);
     };
 
     tasksCounter = (): void => {
-        const tasksAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item_value:not(.done)`).length
+        const tasksListItems: NodeListOf<HTMLDivElement> = <NodeListOf<HTMLDivElement>>this.elements.tasksList.querySelectorAll(`.tasks__list_item`);
+        const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item_value:not(.done)`).length;
 
-        if (tasksAmount > 1) {
-            this.elements.tasksLeft.innerText = `${tasksAmount} items left`;
-        } else if (tasksAmount === 1) {
-            this.elements.tasksLeft.innerText = `${tasksAmount} item left`;
+        if (!tasksListItems.length) {
+            this.elements.tasks.style.display = "none";
         } else {
-            this.elements.tasksLeft.innerText = ``;
+
+            this.elements.tasks.style.display = "block";
+            tasksListItems.forEach(listItems => listItems.style.display = "flex");
+
+            if (!tasksNotDoneAmount || tasksListItems.length === tasksNotDoneAmount) {
+                this.elements.tasksFilterWrapper.style.display = "none";
+            } else {
+                this.elements.tasksFilterWrapper.style.display = "flex";
+            }
+
+            if (tasksNotDoneAmount > 1) {
+                this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} items left`;
+            } else if (tasksNotDoneAmount === 1) {
+                this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} item left`;
+            } else {
+                this.elements.tasksLeft.innerText = ``;
+            }
         }
+
+        // if (tasksNotDoneAmount > 1) {
+        //     this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} items left`;
+        // } else if (tasksNotDoneAmount === 1) {
+        //     this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} item left`;
+        // } else {
+        //     this.elements.tasksLeft.innerText = ``;
+        // }
     };
 
     handleTasksClear = (): void => {
@@ -163,12 +191,17 @@ class TodoApp {
 
             checkedItem.closest(`.tasks__list_item`)?.remove();
 
+            this.tasksCounter();
+
             setTimeout(async (): Promise<void> =>
                 await this.fetchUtils.delete(`tasks/${checkedItem.getAttribute('data-task-id')}`), 100 * index);
         });
     }
 
     handleTasksFilter = (e: MouseEvent): void => {
+        // const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item_value:not(.done)`).length;
+
+        // console.log()
 
         this.elements.tasksList.querySelectorAll(`li`).forEach(taskListItem => {
             if((e.target as HTMLButtonElement).dataset.filter === 'all'){
@@ -187,7 +220,7 @@ class TodoApp {
         this.elements.taskForm.addEventListener(`submit`, this.addTaskToApi);
         this.elements.taskCheckbox.addEventListener(`change`, this.addCheckedTask);
         this.elements.tasksClear.addEventListener(`click`, this.handleTasksClear);
-        this.elements.tasksFilters.forEach((filterBtn: HTMLButtonElement) => filterBtn.addEventListener(`click`, this.handleTasksFilter));
+        this.elements.tasksFilterButtons.forEach((filterBtn: HTMLButtonElement) => filterBtn.addEventListener(`click`, this.handleTasksFilter));
     };
 }
 
@@ -196,22 +229,3 @@ const app = new TodoApp(`http://localhost:0666`);
 console.log(app);
 
 // new TodoApp();
-
-// if (taskDone.classList[1] === `done`) {
-//     this.elements.tasksClear.innerText = ``
-// }
-
-// console.log(this.elements.tasksFilters)
-// dokończ logikę przełączania widoczności buttona
-// console.log(this.elements.tasksList.getElementsByTagName(`li`).length === this.tasksAmount.length)
-// console.log(this.elements.tasksList.getElementsByTagName(`li`).length === this.tasksAmount.length)
-//
-// if (this.tasksAmount.length === this.elements.tasksList.getElementsByTagName(`li`).length) {
-//     this.elements.tasksClear.classList.add(`hidden`)
-// } else if (this.elements.tasksList.getElementsByTagName(`li`).length === 0) {
-//     this.elements.tasksClear.classList.add(`hidden`)
-// } else {
-//     this.elements.tasksClear.classList.remove(`hidden`)
-// }
-
-// może zrób oddzielną metodę ta te dynksy widoczność buttonów też możesz ogarnąć
