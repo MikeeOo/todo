@@ -12,7 +12,7 @@
     border-bottom: 2px solid $el-grey;
   }
 
-  .task {
+  .tasks__item_value {
     background-color: $bg-aux;
     padding: 1.5em 0;
     width: 100%;
@@ -38,7 +38,6 @@
 
     &:hover {
       color: $el-main;
-
     }
   }
 

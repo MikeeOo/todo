@@ -113,7 +113,7 @@ class TodoApp {
         checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `checkbox__custom`}));
 
         // __TASK____NAME__
-        const taskContent: HTMLElement = HtmlUtils.createHtmlElement(`div`, {class: `task`, text: task.taskName})
+        const taskContent: HTMLElement = HtmlUtils.createHtmlElement(`div`, {class: `tasks__item_value`, text: task.taskName})
 
         listItem.appendChild(taskContent);
 
