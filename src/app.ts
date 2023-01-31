@@ -36,7 +36,7 @@ class TodoApp {
         tasksLeft: <HTMLSpanElement>document.querySelector(`.tasks__counter_left`),
         tasksClear: <HTMLButtonElement>document.querySelector(`.tasks__counter_clear`),
         tasksFilterWrapper: <HTMLDivElement>document.body.querySelector(`.tasks__filter_wrapper`),
-        tasksFilterButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`)
+        tasksFilterButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`),
     };
 
     constructor(url: string) {
@@ -124,16 +124,12 @@ class TodoApp {
 
             taskDone?.classList.add(`done`);
 
-            // this.elements.tasksClear.classList.remove(`hidden`)
-
             this.tasksCounter();
 
         } else {
             const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
 
             taskDone?.classList.remove(`done`);
-
-            // this.elements.tasksClear.classList.add(`hidden`)
 
             this.tasksCounter();
         }
@@ -156,6 +152,7 @@ class TodoApp {
         const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item_value:not(.done)`).length;
 
         if (!tasksListItems.length) {
+
             this.elements.tasks.style.display = "none";
         } else {
 
@@ -173,17 +170,9 @@ class TodoApp {
             } else if (tasksNotDoneAmount === 1) {
                 this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} item left`;
             } else {
-                this.elements.tasksLeft.innerText = ``;
+                this.elements.tasksLeft.innerText = `All done!`;
             }
         }
-
-        // if (tasksNotDoneAmount > 1) {
-        //     this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} items left`;
-        // } else if (tasksNotDoneAmount === 1) {
-        //     this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} item left`;
-        // } else {
-        //     this.elements.tasksLeft.innerText = ``;
-        // }
     };
 
     handleTasksClear = (): void => {
@@ -199,19 +188,27 @@ class TodoApp {
     }
 
     handleTasksFilter = (e: MouseEvent): void => {
-        // const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item_value:not(.done)`).length;
+        const tasksCheckedLength: number = this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).length;
 
-        // console.log()
+        if ((e.target as HTMLButtonElement).dataset.filter === "completed") {
+            if (tasksCheckedLength > 1) {
+                this.elements.tasksLeft.innerText = `Done: ${tasksCheckedLength} items`;
+            } else if (tasksCheckedLength === 1) {
+                this.elements.tasksLeft.innerText = `Done: ${tasksCheckedLength} item`;
+            }
+        } else {
+            this.tasksCounter();
+        }
 
-        this.elements.tasksList.querySelectorAll(`li`).forEach(taskListItem => {
-            if((e.target as HTMLButtonElement).dataset.filter === 'all'){
-                taskListItem.style.display = 'flex';
+        this.elements.tasksList.querySelectorAll(`.tasks__list_item`).forEach((taskListItem: Element): void => {
+            if((e.target as HTMLButtonElement).dataset.filter === 'all') {
+                (taskListItem as HTMLLIElement).style.display = 'flex';
             }
-            else if((e.target as HTMLButtonElement).dataset.filter === "active"){
-                taskListItem.style.display = taskListItem.querySelector('input[type="checkbox"]:checked') ? "none" : "flex";
+            else if((e.target as HTMLButtonElement).dataset.filter === "active") {
+                (taskListItem as HTMLLIElement).style.display = taskListItem.querySelector('input[type="checkbox"]:checked') ? "none" : "flex";
             }
-            else if((e.target as HTMLButtonElement).dataset.filter === "completed"){
-                taskListItem.style.display = taskListItem.querySelector('input[type="checkbox"]:checked') ? "flex" : "none";
+            else if((e.target as HTMLButtonElement).dataset.filter === "completed") {
+                (taskListItem as HTMLLIElement).style.display = taskListItem.querySelector('input[type="checkbox"]:checked') ? "flex" : "none";
             }
         });
     }
@@ -227,5 +224,3 @@ class TodoApp {
 const app = new TodoApp(`http://localhost:0666`);
 
 console.log(app);
-
-// new TodoApp();
