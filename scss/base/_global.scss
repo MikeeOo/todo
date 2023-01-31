@@ -57,22 +57,3 @@ input[type="text"], button{
 .hidden {
   display: none;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-.tasks_counter_clear {
-  background-color: rgba(111, 0, 255, 0.5);
-  display: flex;
-  justify-content: space-between;
-  padding: 2rem 0;
-}
-
-.tasks_filters {
-  /*background-color: greenyellow;*/
-  display: flex;
-  justify-content: space-evenly;
-  /*width: 86%;*/
-  /*max-width: 50%;*/
-  padding: 1em 2em;
-  background-color: rgba(255, 255, 0, 0.4);
-}

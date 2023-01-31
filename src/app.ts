@@ -190,7 +190,7 @@ class TodoApp {
             this.elements.tasksLeft.innerText = ``;
         }
 
-        console.log(this.elements.tasksFilters)
+        // console.log(this.elements.tasksFilters)
         // dokończ logikę przełączania widoczności buttona
         // console.log(this.elements.tasksList.getElementsByTagName(`li`).length === this.tasksAmount.length)
         // console.log(this.elements.tasksList.getElementsByTagName(`li`).length === this.tasksAmount.length)

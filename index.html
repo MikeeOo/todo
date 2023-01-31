@@ -48,23 +48,28 @@
       </button>
     </form>
 
-    <ul id="tasks_list" class="container">
+    <div class="tasks container">
 
-    </ul>
+      <ul id="tasks_list">
 
-    <div class="tasks_counter_clear container">
+      </ul>
 
-      <span id="tasks_left"></span>
-      <button id="tasks_clear" class="btn">Clear Completed</button>
+      <div class="tasks_counter_clear">
+
+        <span id="tasks_left"></span>
+        <button id="tasks_clear" class="btn">Clear Completed</button>
+      </div>
+
+      <div class="tasks_filters container">
+
+        <div class="tasks_filters-container">
+
+          <button data-filter="all" >All</button>
+          <button data-filter="active" >Active</button>
+          <button data-filter="completed" >Completed</button>
+        </div>
+      </div>
     </div>
-
-    <div class="tasks_filters container">
-
-      <button data-filter="all" >All</button>
-      <button data-filter="active" >Active</button>
-      <button data-filter="completed" >Completed</button>
-    </div>
-
   </div>
 </body>
 </html>
