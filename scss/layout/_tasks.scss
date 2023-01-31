@@ -5,7 +5,7 @@
   background-color: $bg-aux;
   border-radius: $rad;
 
-  .tasks_list__task_item {
+  &__list_item {
     display: flex;
     color: $el-main;
     align-items: center;
@@ -20,44 +20,46 @@
     word-break: break-all;
   }
 
-  .tasks_counter_clear {
+  &__counter_wrapper {
     display: flex;
     justify-content: space-between;
     border-radius: 0 0 $rad $rad ;
     padding: 0.7em 0.7em;
     color: $el-aux;
-
-    #tasks_left {
-      padding: 0.5em 0 0.5em .85em;
-    }
-
-    #tasks_clear {
-      color: inherit;
-      padding: 0.5em 0.5em;
-    }
-    #tasks_clear:hover {
-      color: $el-main;
-    }
   }
-}
 
-.tasks_filters {
-  border-top: 2px solid $el-grey;
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-  padding: .5em 0;
+  &__counter_left {
+    padding: 0.5em 0 0.5em .85em;
+  }
 
-  [data-filter] {
-    padding: .5em .8em;
-    color: $el-aux;
-
-    @include desktop {
-      padding: .5em 1.2em;
-    }
+  &__counter_clear {
+    color: inherit;
+    padding: 0.5em 0.5em;
 
     &:hover {
       color: $el-main;
+
+    }
+  }
+
+  &__filter_wrapper {
+    border-top: 2px solid $el-grey;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    padding: .5em 0;
+
+    [data-filter] {
+      padding: .5em .8em;
+      color: $el-aux;
+
+      @include desktop {
+        padding: .5em 1.2em;
+      }
+
+      &:hover {
+        color: $el-main;
+      }
     }
   }
 }

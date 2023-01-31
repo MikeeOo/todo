@@ -32,9 +32,9 @@ class TodoApp {
         taskForm: <HTMLFormElement>document.getElementById(`task_form`),
         taskCheckbox: <HTMLInputElement>document.getElementById(`task_checkbox`),
         taskInput: <HTMLInputElement>document.getElementById(`task_form__input`),
-        tasksList: <HTMLUListElement>document.getElementById(`tasks_list`),
-        tasksLeft: <HTMLSpanElement>document.getElementById(`tasks_left`),
-        tasksClear: <HTMLButtonElement>document.getElementById(`tasks_clear`),
+        tasksList: <HTMLUListElement>document.querySelector(`.tasks__list`),
+        tasksLeft: <HTMLSpanElement>document.querySelector(`.tasks__counter_left`),
+        tasksClear: <HTMLButtonElement>document.querySelector(`.tasks__counter_clear`),
         tasksFilters: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`)
     };
 
@@ -99,7 +99,7 @@ class TodoApp {
 
     createTasksListItem = (task: ITask): void => {
 
-        const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks_list__task_item`});
+        const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks__list_item`});
 
         // __CUSTOM__CHECKBOX___
         const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `checkbox__label`});
