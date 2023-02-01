@@ -44,6 +44,7 @@ class TodoApp {
     constructor(url: string) {
         this.fetchUtils = new FetchUtils(url);
 
+
         this.getTasks().then((r: Array<ITask>): void => {
 
             r.map((task: ITask) => this.createTasksListItem(task));
@@ -68,8 +69,7 @@ class TodoApp {
         } else if (this.elements.taskInput.value.length > 43) {
 
             this.handleErrorShow(`Tasks can't be longer than 43 characters...`);
-        }
-        else {
+        } else {
 
             const task: ITask = await this.fetchUtils.post(`tasks`, {
                 taskName: this.elements.taskInput.value,
@@ -178,15 +178,20 @@ class TodoApp {
         } else {
 
             this.elements.tasks.style.display = "block";
-            tasksListItems.forEach(listItems => listItems.style.display = "flex");
+
+            tasksListItems.forEach((listItems: HTMLDivElement): string => listItems.style.display = "flex");
             // to powoduje powrót do all
 
             if (!tasksNotDoneAmount || tasksListItems.length === tasksNotDoneAmount) {
 
                 this.elements.tasksFilterWrapper.style.display = "none";
             } else {
+
                 this.elements.tasksFilterWrapper.style.display = "flex";
+                this.elements.tasksClear.style.display = `none`;
             }
+
+            (tasksListItems.length === tasksNotDoneAmount) ? this.elements.tasksClear.style.display = `none` : this.elements.tasksClear.style.display = `inline-block`;
 
             if (tasksNotDoneAmount > 1) {
                 this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} items left`;
@@ -196,6 +201,8 @@ class TodoApp {
                 this.elements.tasksLeft.innerText = `All done!`;
             }
         }
+
+        this.backToAll();
     };
 
     handleTasksClear = (): void => {
@@ -206,28 +213,13 @@ class TodoApp {
             this.tasksCounter();
 
             setTimeout(async (): Promise<void> =>
-                await this.fetchUtils.delete(`tasks/${checkedItem.getAttribute('data-task-id')}`), 100 * index);
+                await this.fetchUtils.delete(`tasks/${checkedItem.getAttribute('data-task-id')}`), 200 * index);
         });
     }
 
     handleTasksFilter = (e: MouseEvent): void => {
         const tasksCheckedLength: number = this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).length;
-
-        // if((e.target as HTMLButtonElement).dataset.filter === 'all') {
-        //     (e.target as HTMLButtonElement).style.color = `white`;
-        //     this.elements.tasksFilterButtons[1].style.color = `#515471`;
-        //     this.elements.tasksFilterButtons[2].style.color = `#515471`;
-        // }
-        // else if((e.target as HTMLButtonElement).dataset.filter === "active") {
-        //     (e.target as HTMLButtonElement).style.color = `white`;
-        //     this.elements.tasksFilterButtons[0].style.color = `#515471`;
-        //     this.elements.tasksFilterButtons[2].style.color = `#515471`;
-        // }
-        // else if((e.target as HTMLButtonElement).dataset.filter === "completed") {
-        //     (e.target as HTMLButtonElement).style.color = `white`;
-        //     this.elements.tasksFilterButtons[0].style.color = `#515471`;
-        //     this.elements.tasksFilterButtons[1].style.color = `#515471`;
-        // }
+        const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item_value:not(.done)`).length;
 
         if ((e.target as HTMLButtonElement).dataset.filter === "completed") {
             if (tasksCheckedLength > 1) {
@@ -238,6 +230,21 @@ class TodoApp {
         } else {
             this.tasksCounter();
         }
+
+        if ((e.target as HTMLButtonElement).dataset.filter === "active") {
+            this.elements.tasksClear.style.display = `none`;
+            if (tasksNotDoneAmount > 1) {
+                this.elements.tasksLeft.innerText = `Active: ${tasksNotDoneAmount} items`;
+            } else if (tasksNotDoneAmount === 1) {
+                this.elements.tasksLeft.innerText = `Active: ${tasksNotDoneAmount} item`;
+            }
+        } else {
+            this.elements.tasksClear.style.display = `inline-block`;
+        }
+
+        this.setDefaultBtnColors();
+
+        (e.target as HTMLButtonElement).style.color = `#FFFFFF`;
 
         this.elements.tasksList.querySelectorAll(`.tasks__list_item`).forEach((taskListItem: Element): void => {
             if((e.target as HTMLButtonElement).dataset.filter === 'all') {
@@ -251,6 +258,13 @@ class TodoApp {
             }
         });
     }
+
+    backToAll = (): void => {
+        this.setDefaultBtnColors();
+        (document.querySelector(`[data-filter="all"]`) as HTMLButtonElement).style.color = `#FFFFFF`;
+    }
+
+    setDefaultBtnColors = (): void => this.elements.tasksFilterButtons.forEach((filterBtn: HTMLButtonElement): string => filterBtn.style.color = `#515471`);
 
     setEvents(): void {
         this.elements.taskForm.addEventListener(`submit`, this.addTaskToApi);
