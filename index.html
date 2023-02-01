@@ -26,27 +26,32 @@
 
     <form class="container" action="" id="task_form">
 
-      <div class="checkbox">
 
-        <label class="checkbox__label" for="task_checkbox">
+        <div class="checkbox">
 
-          <input class="checkbox__default" id="task_checkbox" type="checkbox">
-          <span class="checkbox__custom"></span>
+          <label class="checkbox__label" for="task_checkbox">
+
+            <input class="checkbox__default" id="task_checkbox" type="checkbox">
+            <span class="checkbox__custom"></span>
+          </label>
+        </div>
+
+        <label class="task_form__input_label" for="task_form__input" >
+
+          <input id="task_form__input"
+                 type="text"
+                 placeholder="Create a new todo..."/>
         </label>
-      </div>
 
-      <label class="task_form__input_label" for="task_form__input" >
+        <button type="submit" class="btn">
 
-        <input id="task_form__input"
-               type="text"
-               placeholder="Create a new todo..."/>
-      </label>
+          <span class="fa-solid fa-arrow-up-right-from-square"></span>
+        </button>
 
-      <button type="submit" class="btn">
 
-        <span class="fa-solid fa-arrow-up-right-from-square"></span>
-      </button>
     </form>
+
+    <p id="error" class="container"></p>
 
     <div class="tasks container">
 

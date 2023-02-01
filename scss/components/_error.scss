@@ -1,0 +1,12 @@
+@import "scss/utils/variables";
+
+#error {
+  display: none;
+  color: #FF0000;
+  background-color: $bg-aux;
+  text-align: center;
+  padding: .5em 0;
+  margin: .7em auto;
+  border-radius: $rad;
+  box-shadow: 0 0 25px 0 #FF0000;
+}

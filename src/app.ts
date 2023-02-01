@@ -4,6 +4,7 @@ import {ITask} from "./FetchUtils";
 import HtmlUtils from "./HtmlUtils";
 
 interface IElements {
+    error: HTMLParagraphElement;
     taskForm: HTMLFormElement;
     taskCheckbox: HTMLInputElement;
     taskInput: HTMLInputElement;
@@ -28,6 +29,7 @@ class TodoApp {
     fetchUtils: IFetchUtils;
 
     elements: IElements = {
+        error: <HTMLParagraphElement>document.getElementById(`error`),
         taskForm: <HTMLFormElement>document.getElementById(`task_form`),
         taskCheckbox: <HTMLInputElement>document.getElementById(`task_checkbox`),
         taskInput: <HTMLInputElement>document.getElementById(`task_form__input`),
@@ -35,7 +37,7 @@ class TodoApp {
         tasksList: <HTMLUListElement>document.querySelector(`.tasks__list`),
         tasksLeft: <HTMLSpanElement>document.querySelector(`.tasks__counter_left`),
         tasksClear: <HTMLButtonElement>document.querySelector(`.tasks__counter_clear`),
-        tasksFilterWrapper: <HTMLDivElement>document.body.querySelector(`.tasks__filter_wrapper`),
+        tasksFilterWrapper: <HTMLDivElement>document.querySelector(`.tasks__filter_wrapper`),
         tasksFilterButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`),
     };
 
@@ -57,9 +59,18 @@ class TodoApp {
     addTaskToApi = async (e: SubmitEvent): Promise<void> => {
         e.preventDefault();
 
-        if (this.elements.taskInput.value.length > 43 || this.elements.taskInput.value.length === 0) {
-            // console.log(`xd`);
-        } else {
+        this.handleErrorHide()
+
+        if (this.elements.taskInput.value.length <= 1) {
+
+            this.handleErrorShow(`Task must be at least 2 characters long...`);
+
+        } else if (this.elements.taskInput.value.length > 43) {
+
+            this.handleErrorShow(`Tasks can't be longer than 43 characters...`);
+        }
+        else {
+
             const task: ITask = await this.fetchUtils.post(`tasks`, {
                 taskName: this.elements.taskInput.value,
                 isChecked: this.elements.taskCheckbox.checked
@@ -69,9 +80,23 @@ class TodoApp {
 
             this.createTasksListItem(task);
 
-            !this.elements.taskCheckbox.checked && this.tasksCounter();
+            this.tasksCounter();
         }
     };
+
+    handleErrorShow = (errorContent: string): void => {
+
+        this.elements.error.textContent = errorContent;
+        this.elements.error.style.display = `block`;
+        this.elements.taskForm.style.margin = `2.65em auto 0em auto`;
+
+        setTimeout((): void => this.handleErrorHide(), 12 * 1000);
+    }
+
+    handleErrorHide = (): void => {
+        this.elements.error.style.display = `none`;
+        this.elements.taskForm.style.margin = `2.65em auto 1.40em auto`;
+    }
 
     addCheckedTask = (e: Event): void => (e.target as HTMLInputElement).checked ? this.elements.taskInput.classList.add(`done`) : this.elements.taskInput.classList.remove(`done`);
 
@@ -158,8 +183,10 @@ class TodoApp {
 
             this.elements.tasks.style.display = "block";
             tasksListItems.forEach(listItems => listItems.style.display = "flex");
+            // to powoduje powrót do all
 
             if (!tasksNotDoneAmount || tasksListItems.length === tasksNotDoneAmount) {
+
                 this.elements.tasksFilterWrapper.style.display = "none";
             } else {
                 this.elements.tasksFilterWrapper.style.display = "flex";
@@ -189,6 +216,22 @@ class TodoApp {
 
     handleTasksFilter = (e: MouseEvent): void => {
         const tasksCheckedLength: number = this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).length;
+
+        // if((e.target as HTMLButtonElement).dataset.filter === 'all') {
+        //     (e.target as HTMLButtonElement).style.color = `white`;
+        //     this.elements.tasksFilterButtons[1].style.color = `#515471`;
+        //     this.elements.tasksFilterButtons[2].style.color = `#515471`;
+        // }
+        // else if((e.target as HTMLButtonElement).dataset.filter === "active") {
+        //     (e.target as HTMLButtonElement).style.color = `white`;
+        //     this.elements.tasksFilterButtons[0].style.color = `#515471`;
+        //     this.elements.tasksFilterButtons[2].style.color = `#515471`;
+        // }
+        // else if((e.target as HTMLButtonElement).dataset.filter === "completed") {
+        //     (e.target as HTMLButtonElement).style.color = `white`;
+        //     this.elements.tasksFilterButtons[0].style.color = `#515471`;
+        //     this.elements.tasksFilterButtons[1].style.color = `#515471`;
+        // }
 
         if ((e.target as HTMLButtonElement).dataset.filter === "completed") {
             if (tasksCheckedLength > 1) {
