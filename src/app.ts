@@ -91,12 +91,12 @@ class TodoApp {
         this.elements.taskForm.style.margin = `2.65em auto 0em auto`;
 
         setTimeout((): void => this.handleErrorHide(), 12 * 1000);
-    }
+    };
 
     handleErrorHide = (): void => {
         this.elements.error.style.display = `none`;
         this.elements.taskForm.style.margin = `2.65em auto 1.40em auto`;
-    }
+    };
 
     addCheckedTask = (e: Event): void => (e.target as HTMLInputElement).checked ? this.elements.taskInput.classList.add(`done`) : this.elements.taskInput.classList.remove(`done`);
 
@@ -138,6 +138,7 @@ class TodoApp {
     };
 
     handleCheckbox = async (e: Event, task: ITask): Promise<void> => {
+        const itemValue: HTMLDivElement = <HTMLDivElement>(e.target as HTMLInputElement).closest(`.tasks__list_item`)?.querySelector(`.tasks__item_value`);
 
         await this.fetchUtils.put(`tasks/${task.id}`, {
             taskName: task.taskName,
@@ -145,16 +146,14 @@ class TodoApp {
         });
 
         if ((e.target as HTMLInputElement).checked) {
-            const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
 
-            taskDone?.classList.add(`done`);
+            itemValue.classList.add(`done`);
 
             this.tasksCounter();
 
         } else {
-            const taskDone: HTMLElement = (e.target as HTMLInputElement).closest(`li`)?.childNodes[1] as HTMLElement;
 
-            taskDone?.classList.remove(`done`);
+            itemValue.classList.remove(`done`);
 
             this.tasksCounter();
         }
@@ -163,9 +162,6 @@ class TodoApp {
     deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
 
         (e.target as HTMLSpanElement).closest(`.tasks__list_item`)?.remove();
-        // const taskDone: HTMLElement = (e.target as HTMLSpanElement).closest(`li`)?.childNodes[1] as HTMLElement;
-        // TUTAJ POLEĆ QUERY SELECTOREM TUTAJ TEŻ KLASĘ SPANA
-        // taskDone.classList[1] !== `done` && this.tasksCounter();
 
         this.tasksCounter();
 
