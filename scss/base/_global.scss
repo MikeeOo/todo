@@ -49,11 +49,16 @@ input[type="text"], button{
   }
 }
 
-.done {
-  text-decoration: line-through $text-dim;
-  color: $text-dim !important;
+input:-webkit-autofill,
+input:-webkit-autofill::first-line,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,{
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-text-fill-color: $text-dim !important;
 }
 
-.hidden {
-  display: none;
+#app .done {
+  text-decoration: line-through $text-dim;
+  color: $text-dim;
 }

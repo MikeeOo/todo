@@ -90,7 +90,7 @@ export default class TodoApp {
         this.elements.error.style.display = `block`;
         this.elements.taskForm.style.margin = `2.65em auto 0em auto`;
 
-        setTimeout((): void => this.handleErrorHide(), 12 * 1000);
+        setTimeout((): void => this.handleErrorHide(), 7 * 1000);
     };
 
     handleErrorHide = (): void => {
