@@ -1,8 +1,4 @@
-export interface ITask {
-    taskName: string;
-    id?: number;
-    isChecked?: boolean;
-}
+import {ITask} from "../types/common";
 
 export default class FetchUtils {
 

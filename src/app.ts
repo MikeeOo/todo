@@ -1,7 +1,7 @@
 import "../scss/main.scss"
-import FetchUtils from "./FetchUtils";
-import {ITask} from "./FetchUtils";
-import HtmlUtils from "./HtmlUtils";
+import FetchUtils from "./utils/FetchUtils";
+import HtmlUtils from "./utils/HtmlUtils";
+import {ITask} from "./types/common";
 
 interface IElements {
     error: HTMLParagraphElement;
@@ -24,7 +24,7 @@ interface IFetchUtils {
     delete(endpoint: string): Promise<void>;
 }
 
-class TodoApp {
+export default class TodoApp {
 
     fetchUtils: IFetchUtils;
 
@@ -42,8 +42,8 @@ class TodoApp {
     };
 
     constructor(url: string) {
-        this.fetchUtils = new FetchUtils(url);
 
+        this.fetchUtils = new FetchUtils(url);
 
         this.getTasks().then((r: Array<ITask>): void => {
 
@@ -180,7 +180,6 @@ class TodoApp {
             this.elements.tasks.style.display = "block";
 
             tasksListItems.forEach((listItems: HTMLDivElement): string => listItems.style.display = "flex");
-            // to powoduje powrót do all
 
             if (!tasksNotDoneAmount || tasksListItems.length === tasksNotDoneAmount) {
 
@@ -274,6 +273,4 @@ class TodoApp {
     };
 }
 
-const app = new TodoApp(`http://localhost:0666`);
-
-console.log(app);
+new TodoApp(` http://localhost:0666`);

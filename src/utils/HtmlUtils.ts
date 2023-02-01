@@ -6,8 +6,6 @@ interface IOptions {
     data?: {
         [key: string]: string
     };
-    // innerText?: string;
-    // innerHTML?: string;
 }
 
 export default class HtmlUtils {
