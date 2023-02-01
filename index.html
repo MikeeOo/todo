@@ -24,47 +24,51 @@
       <h1>T O D O</h1>
     </header>
 
-    <form class="container" action="" id="task_form">
+    <div class="task container">
 
-        <div class="checkbox">
+      <form action="" class="task__form" id="task-form">
 
-          <label class="checkbox__label" for="task_checkbox">
+          <div class="task__checkbox">
 
-            <input class="checkbox__default" id="task_checkbox" type="checkbox">
-            <span class="checkbox__custom"></span>
+            <label class="task__checkbox-label" for="task-checkbox">
+
+              <input class="task__checkbox-default" id="task-checkbox" type="checkbox">
+              <span class="task__checkbox-custom"></span>
+            </label>
+          </div>
+
+          <label class="task__input-label" for="task-input" >
+
+            <input id="task-input"
+                   class="task__input"
+                   type="text"
+                   placeholder="Create a new todo..."/>
           </label>
-        </div>
 
-        <label class="task_form__input_label" for="task_form__input" >
+          <button type="submit" class="btn">
 
-          <input id="task_form__input"
-                 type="text"
-                 placeholder="Create a new todo..."/>
-        </label>
+            <span class="fa-solid fa-arrow-up-right-from-square"></span>
+          </button>
+      </form>
+    </div>
 
-        <button type="submit" class="btn">
+    <p id="task-error" class="container"></p>
 
-          <span class="fa-solid fa-arrow-up-right-from-square"></span>
-        </button>
-    </form>
+    <div class="tasks container" id="tasks-wrapper">
 
-    <p id="error" class="container"></p>
-
-    <div class="tasks container">
-
-      <ul class="tasks__list">
+      <ul class="tasks__list" id="tasks-list">
 
       </ul>
 
-      <div class="tasks__counter_wrapper">
+      <div class="tasks__counter-wrapper">
 
-        <span class="tasks__counter_left"></span>
-        <button class="tasks__counter_clear btn">Clear Completed</button>
+        <span class="tasks__counter-left" id="tasks-left"></span>
+        <button class="tasks__counter-clear btn" id="tasks-clear">Clear Completed</button>
       </div>
 
-      <div class="tasks__filter_wrapper container">
+      <div class="tasks__filter-wrapper container" id="filters-wrapper">
 
-        <div class="tasks__filter_buttons">
+        <div class="tasks__filter-buttons">
 
           <button data-filter="all">All</button>
           <button data-filter="active" >Active</button>

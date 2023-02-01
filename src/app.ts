@@ -1,4 +1,4 @@
-import "../scss/main.scss"
+import "../scss/main.scss";
 import FetchUtils from "./utils/FetchUtils";
 import HtmlUtils from "./utils/HtmlUtils";
 import {ITask} from "./types/common";
@@ -12,8 +12,8 @@ interface IElements {
     tasksList: HTMLElement;
     tasksLeft: HTMLSpanElement;
     tasksClear: HTMLButtonElement;
-    tasksFilterWrapper: HTMLDivElement;
-    tasksFilterButtons: NodeListOf<HTMLButtonElement>;
+    tasksFiltersWrapper: HTMLDivElement;
+    tasksFiltersButtons: NodeListOf<HTMLButtonElement>;
 }
 
 interface IFetchUtils {
@@ -29,16 +29,16 @@ export default class TodoApp {
     fetchUtils: IFetchUtils;
 
     elements: IElements = {
-        error: <HTMLParagraphElement>document.getElementById(`error`),
-        taskForm: <HTMLFormElement>document.getElementById(`task_form`),
-        taskCheckbox: <HTMLInputElement>document.getElementById(`task_checkbox`),
-        taskInput: <HTMLInputElement>document.getElementById(`task_form__input`),
-        tasks: <HTMLDivElement>document.querySelector(`.tasks`),
-        tasksList: <HTMLUListElement>document.querySelector(`.tasks__list`),
-        tasksLeft: <HTMLSpanElement>document.querySelector(`.tasks__counter_left`),
-        tasksClear: <HTMLButtonElement>document.querySelector(`.tasks__counter_clear`),
-        tasksFilterWrapper: <HTMLDivElement>document.querySelector(`.tasks__filter_wrapper`),
-        tasksFilterButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`),
+        error: <HTMLParagraphElement>document.getElementById(`task-error`),
+        taskForm: <HTMLFormElement>document.getElementById(`task-form`),
+        taskCheckbox: <HTMLInputElement>document.getElementById(`task-checkbox`),
+        taskInput: <HTMLInputElement>document.getElementById(`task-input`),
+        tasks: <HTMLDivElement>document.getElementById(`tasks-wrapper`),
+        tasksList: <HTMLUListElement>document.getElementById(`tasks-list`),
+        tasksLeft: <HTMLSpanElement>document.getElementById(`tasks-left`),
+        tasksClear: <HTMLButtonElement>document.getElementById(`tasks-clear`),
+        tasksFiltersWrapper: <HTMLDivElement>document.getElementById(`filters-wrapper`),
+        tasksFiltersButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`),
     };
 
     constructor(url: string) {
@@ -102,21 +102,21 @@ export default class TodoApp {
 
     createTasksListItem = (task: ITask): void => {
 
-        const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks__list_item`});
+        const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks__list-item`});
 
         // __CUSTOM__CHECKBOX___
-        const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `checkbox__label`});
+        const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `task__checkbox-label`});
 
-        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `checkbox`})).appendChild(checkBoxLabel);
+        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task__checkbox`})).appendChild(checkBoxLabel);
 
-        const checkBoxDefault: HTMLElement = HtmlUtils.createHtmlElement(`input`, {class: `checkbox__default`, type: `checkbox`, checked: task.isChecked, data: {"task-id": `${task.id}`}});
+        const checkBoxDefault: HTMLElement = HtmlUtils.createHtmlElement(`input`, {class: `task__checkbox-default`, type: `checkbox`, checked: task.isChecked, data: {"task-id": `${task.id}`}});
 
         checkBoxLabel.appendChild(checkBoxDefault);
 
-        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `checkbox__custom`}));
+        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `task__checkbox-custom`}));
 
         // __TASK____NAME__
-        const taskContent: HTMLElement = HtmlUtils.createHtmlElement(`div`, {class: `tasks__item_value`, text: task.taskName})
+        const taskContent: HTMLElement = HtmlUtils.createHtmlElement(`div`, {class: `tasks__item-value`, text: task.taskName})
 
         listItem.appendChild(taskContent);
 
@@ -138,7 +138,7 @@ export default class TodoApp {
     };
 
     handleCheckbox = async (e: Event, task: ITask): Promise<void> => {
-        const itemValue: HTMLDivElement = <HTMLDivElement>(e.target as HTMLInputElement).closest(`.tasks__list_item`)?.querySelector(`.tasks__item_value`);
+        const itemValue: HTMLDivElement = <HTMLDivElement>(e.target as HTMLInputElement).closest(`.tasks__list-item`)?.querySelector(`.tasks__item-value`);
 
         await this.fetchUtils.put(`tasks/${task.id}`, {
             taskName: task.taskName,
@@ -161,7 +161,7 @@ export default class TodoApp {
 
     deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
 
-        (e.target as HTMLSpanElement).closest(`.tasks__list_item`)?.remove();
+        (e.target as HTMLSpanElement).closest(`.tasks__list-item`)?.remove();
 
         this.tasksCounter();
 
@@ -169,8 +169,8 @@ export default class TodoApp {
     };
 
     tasksCounter = (): void => {
-        const tasksListItems: NodeListOf<HTMLDivElement> = <NodeListOf<HTMLDivElement>>this.elements.tasksList.querySelectorAll(`.tasks__list_item`);
-        const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item_value:not(.done)`).length;
+        const tasksListItems: NodeListOf<HTMLDivElement> = <NodeListOf<HTMLDivElement>>this.elements.tasksList.querySelectorAll(`.tasks__list-item`);
+        const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item-value:not(.done)`).length;
 
         if (!tasksListItems.length) {
 
@@ -183,10 +183,10 @@ export default class TodoApp {
 
             if (!tasksNotDoneAmount || tasksListItems.length === tasksNotDoneAmount) {
 
-                this.elements.tasksFilterWrapper.style.display = "none";
+                this.elements.tasksFiltersWrapper.style.display = "none";
             } else {
 
-                this.elements.tasksFilterWrapper.style.display = "flex";
+                this.elements.tasksFiltersWrapper.style.display = "flex";
                 this.elements.tasksClear.style.display = `none`;
             }
 
@@ -207,7 +207,7 @@ export default class TodoApp {
     handleTasksClear = (): void => {
         this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).forEach((checkedItem: Element, index: number): void => {
 
-            checkedItem.closest(`.tasks__list_item`)?.remove();
+            checkedItem.closest(`.tasks__list-item`)?.remove();
 
             this.tasksCounter();
 
@@ -218,7 +218,7 @@ export default class TodoApp {
 
     handleTasksFilter = (e: MouseEvent): void => {
         const tasksCheckedLength: number = this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).length;
-        const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item_value:not(.done)`).length;
+        const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item-value:not(.done)`).length;
 
         if ((e.target as HTMLButtonElement).dataset.filter === "completed") {
             if (tasksCheckedLength > 1) {
@@ -245,7 +245,7 @@ export default class TodoApp {
 
         (e.target as HTMLButtonElement).style.color = `#FFFFFF`;
 
-        this.elements.tasksList.querySelectorAll(`.tasks__list_item`).forEach((taskListItem: Element): void => {
+        this.elements.tasksList.querySelectorAll(`.tasks__list-item`).forEach((taskListItem: Element): void => {
             if((e.target as HTMLButtonElement).dataset.filter === 'all') {
                 (taskListItem as HTMLLIElement).style.display = 'flex';
             }
@@ -263,13 +263,13 @@ export default class TodoApp {
         (document.querySelector(`[data-filter="all"]`) as HTMLButtonElement).style.color = `#FFFFFF`;
     }
 
-    setDefaultBtnColors = (): void => this.elements.tasksFilterButtons.forEach((filterBtn: HTMLButtonElement): string => filterBtn.style.color = `#515471`);
+    setDefaultBtnColors = (): void => this.elements.tasksFiltersButtons.forEach((filterBtn: HTMLButtonElement): string => filterBtn.style.color = `#515471`);
 
     setEvents(): void {
         this.elements.taskForm.addEventListener(`submit`, this.addTaskToApi);
         this.elements.taskCheckbox.addEventListener(`change`, this.addCheckedTask);
         this.elements.tasksClear.addEventListener(`click`, this.handleTasksClear);
-        this.elements.tasksFilterButtons.forEach((filterBtn: HTMLButtonElement) => filterBtn.addEventListener(`click`, this.handleTasksFilter));
+        this.elements.tasksFiltersButtons.forEach((filterBtn: HTMLButtonElement) => filterBtn.addEventListener(`click`, this.handleTasksFilter));
     };
 }
 

@@ -5,14 +5,14 @@
   background-color: $bg-aux;
   border-radius: $rad;
 
-  &__list_item {
+  &__list-item {
     display: flex;
     color: $el-main;
     align-items: center;
     border-bottom: 2px solid $el-grey;
   }
 
-  .tasks__item_value {
+  &__item-value {
     background-color: $bg-aux;
     padding: 1.5em 0;
     width: 100%;
@@ -20,7 +20,7 @@
     word-break: break-all;
   }
 
-  &__counter_wrapper {
+  &__counter-wrapper {
     display: flex;
     justify-content: space-between;
     border-radius: 0 0 $rad $rad ;
@@ -28,11 +28,11 @@
     color: $el-aux;
   }
 
-  &__counter_left {
+  &__counter-left {
     padding: 0.5em 0 0.5em .85em;
   }
 
-  &__counter_clear {
+  &__counter-clear {
     color: inherit;
     padding: 0.5em 0.5em;
 
@@ -41,7 +41,7 @@
     }
   }
 
-  &__filter_wrapper {
+  &__filter-wrapper {
     border-top: 2px solid $el-grey;
     display: flex;
     justify-content: space-around;

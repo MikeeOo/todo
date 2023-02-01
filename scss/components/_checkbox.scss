@@ -1,6 +1,6 @@
 @import "../utils/variables";
 
-.checkbox {
+.task__checkbox {
   background-color: $bg-aux;
 
   display: flex;
@@ -8,7 +8,7 @@
   padding: 0 1.2em 0 1.6em;
   border-radius: 5px 0 0 5px;
 
-  .checkbox__label {
+  &-label {
     background-color: $bg-aux;
     display: flex;
     border: 2px solid $el-grey;
@@ -19,17 +19,15 @@
     }
   }
 
-
-
-  .checkbox__default, .checkbox__custom {
+  &-default, &-custom {
     width: 1.35em;
     height: 1.35em;
   }
-  .checkbox__default {
+  &-default {
     cursor: pointer;
     opacity: 0;
 
-    &:checked ~ .checkbox__custom {
+    &:checked ~ .task__checkbox-custom {
       background-image: $grad;
       &:after {
         display: block;
@@ -37,7 +35,7 @@
     }
   }
 
-  .checkbox__custom {
+  &-custom {
     position: absolute;
     top: 0;
     left: 0;
