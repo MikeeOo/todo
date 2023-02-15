@@ -14,7 +14,6 @@ body {
   color: $el-main;
   font-family: 'Josefin Sans', sans-serif;
   font-size: 1.2rem;
-
   @include desktop {
     font-size: 1.8rem;
   }
@@ -32,7 +31,6 @@ body {
   margin: 0 auto;
   max-width: 375px;
   width: 86.7%;
-
   @include desktop {
     max-width: 540px;
   }
@@ -61,4 +59,8 @@ input:-webkit-autofill:active,{
 #app .done {
   text-decoration: line-through $text-dim;
   color: $text-dim;
+}
+
+footer {
+  height: 4.8rem;
 }

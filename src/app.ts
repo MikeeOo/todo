@@ -25,9 +25,7 @@ interface IFetchUtils {
 }
 
 export default class TodoApp {
-
     fetchUtils: IFetchUtils;
-
     elements: IElements = {
         error: <HTMLParagraphElement>document.getElementById(`task-error`),
         taskForm: <HTMLFormElement>document.getElementById(`task-form`),
@@ -40,18 +38,12 @@ export default class TodoApp {
         tasksFiltersWrapper: <HTMLDivElement>document.getElementById(`filters-wrapper`),
         tasksFiltersButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`),
     };
-
     constructor(url: string) {
-
         this.fetchUtils = new FetchUtils(url);
-
         this.getTasks().then((r: Array<ITask>): void => {
-
             r.map((task: ITask) => this.createTasksListItem(task));
-
             this.tasksCounter();
         });
-
         this.setEvents();
     };
 
@@ -59,37 +51,26 @@ export default class TodoApp {
 
     addTaskToApi = async (e: SubmitEvent): Promise<void> => {
         e.preventDefault();
-
-        this.handleErrorHide()
-
+        this.handleErrorHide();
         if (this.elements.taskInput.value.length <= 1) {
-
             this.handleErrorShow(`Task must be at least 2 characters long...`);
-
         } else if (this.elements.taskInput.value.length > 43) {
-
             this.handleErrorShow(`Tasks can't be longer than 43 characters...`);
         } else {
-
             const task: ITask = await this.fetchUtils.post(`tasks`, {
                 taskName: this.elements.taskInput.value,
                 isChecked: this.elements.taskCheckbox.checked
             });
-
             this.elements.taskInput.value = ``;
-
             this.createTasksListItem(task);
-
             this.tasksCounter();
         }
     };
 
     handleErrorShow = (errorContent: string): void => {
-
         this.elements.error.textContent = errorContent;
         this.elements.error.style.display = `block`;
         this.elements.taskForm.style.margin = `2.65em auto 0em auto`;
-
         setTimeout((): void => this.handleErrorHide(), 7 * 1000);
     };
 
@@ -101,97 +82,65 @@ export default class TodoApp {
     addCheckedTask = (e: Event): void => (e.target as HTMLInputElement).checked ? this.elements.taskInput.classList.add(`done`) : this.elements.taskInput.classList.remove(`done`);
 
     createTasksListItem = (task: ITask): void => {
-
         const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks__list-item`});
-
-        // __CUSTOM__CHECKBOX___
+        // CUSTOM__CHECKBOX
         const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `task__checkbox-label`});
-
         listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task__checkbox`})).appendChild(checkBoxLabel);
-
         const checkBoxDefault: HTMLElement = HtmlUtils.createHtmlElement(`input`, {class: `task__checkbox-default`, type: `checkbox`, checked: task.isChecked, data: {"task-id": `${task.id}`}});
-
         checkBoxLabel.appendChild(checkBoxDefault);
-
         checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `task__checkbox-custom`}));
-
-        // __TASK____NAME__
+        // TASK____NAME
         const taskContent: HTMLElement = HtmlUtils.createHtmlElement(`div`, {class: `tasks__item-value`, text: task.taskName})
-
         listItem.appendChild(taskContent);
-
         task.isChecked && taskContent.classList.add(`done`);
-
-        // __DELETE__BUTTON__
+        // DELETE__BUTTON
         const deleteBtn: HTMLElement = HtmlUtils.createHtmlElement(`button`, {class: "btn"});
-
         listItem.appendChild(deleteBtn).appendChild(HtmlUtils.createHtmlElement(`span`, {class: `fa-solid fa-xmark`}));
-
-        // EVENTS
-        // checkbox--event
+        // EVENT--checkbox
         checkBoxDefault.addEventListener('change', (e: Event) => this.handleCheckbox(e, task));
-        // delete_button--event
+        // EVENT--delete_button
         deleteBtn.addEventListener(`click`, (e: MouseEvent) => this.deleteTask(e, task));
-
         // add list item to tasksList
         this.elements.tasksList.appendChild(listItem);
     };
 
     handleCheckbox = async (e: Event, task: ITask): Promise<void> => {
         const itemValue: HTMLDivElement = <HTMLDivElement>(e.target as HTMLInputElement).closest(`.tasks__list-item`)?.querySelector(`.tasks__item-value`);
-
         await this.fetchUtils.put(`tasks/${task.id}`, {
             taskName: task.taskName,
             isChecked: (e.target as HTMLInputElement).checked
         });
-
         if ((e.target as HTMLInputElement).checked) {
-
             itemValue.classList.add(`done`);
-
             this.tasksCounter();
 
         } else {
-
             itemValue.classList.remove(`done`);
-
             this.tasksCounter();
         }
     };
 
     deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
-
         (e.target as HTMLSpanElement).closest(`.tasks__list-item`)?.remove();
-
         this.tasksCounter();
-
         await this.fetchUtils.delete(`tasks/${task.id}`);
     };
 
     tasksCounter = (): void => {
         const tasksListItems: NodeListOf<HTMLDivElement> = <NodeListOf<HTMLDivElement>>this.elements.tasksList.querySelectorAll(`.tasks__list-item`);
         const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item-value:not(.done)`).length;
-
         if (!tasksListItems.length) {
-
             this.elements.tasks.style.display = "none";
         } else {
-
             this.elements.tasks.style.display = "block";
-
             tasksListItems.forEach((listItems: HTMLDivElement): string => listItems.style.display = "flex");
-
             if (!tasksNotDoneAmount || tasksListItems.length === tasksNotDoneAmount) {
-
                 this.elements.tasksFiltersWrapper.style.display = "none";
             } else {
-
                 this.elements.tasksFiltersWrapper.style.display = "flex";
                 this.elements.tasksClear.style.display = `none`;
             }
-
             (tasksListItems.length === tasksNotDoneAmount) ? this.elements.tasksClear.style.display = `none` : this.elements.tasksClear.style.display = `inline-block`;
-
             if (tasksNotDoneAmount > 1) {
                 this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} items left`;
             } else if (tasksNotDoneAmount === 1) {
@@ -200,21 +149,17 @@ export default class TodoApp {
                 this.elements.tasksLeft.innerText = `All done!`;
             }
         }
-
         this.backToAll();
     };
 
     handleTasksClear = (): void => {
         this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).forEach((checkedItem: Element, index: number): void => {
-
             checkedItem.closest(`.tasks__list-item`)?.remove();
-
             this.tasksCounter();
-
             setTimeout(async (): Promise<void> =>
                 await this.fetchUtils.delete(`tasks/${checkedItem.getAttribute('data-task-id')}`), 200 * index);
         });
-    }
+    };
 
     handleTasksFilter = (e: MouseEvent): void => {
         const tasksCheckedLength: number = this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).length;
@@ -256,12 +201,12 @@ export default class TodoApp {
                 (taskListItem as HTMLLIElement).style.display = taskListItem.querySelector('input[type="checkbox"]:checked') ? "flex" : "none";
             }
         });
-    }
+    };
 
     backToAll = (): void => {
         this.setDefaultBtnColors();
         (document.querySelector(`[data-filter="all"]`) as HTMLButtonElement).style.color = `#FFFFFF`;
-    }
+    };
 
     setDefaultBtnColors = (): void => this.elements.tasksFiltersButtons.forEach((filterBtn: HTMLButtonElement): string => filterBtn.style.color = `#515471`);
 
@@ -271,6 +216,6 @@ export default class TodoApp {
         this.elements.tasksClear.addEventListener(`click`, this.handleTasksClear);
         this.elements.tasksFiltersButtons.forEach((filterBtn: HTMLButtonElement) => filterBtn.addEventListener(`click`, this.handleTasksFilter));
     };
-}
+};
 
-new TodoApp(` http://localhost:0666`);
+new TodoApp(` http://localhost:3001`);
