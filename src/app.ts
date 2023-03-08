@@ -18,7 +18,7 @@ interface IElements {
 
 interface IFetchUtils {
     baseUrl: string;
-    get(endpoint: string): Promise<any>;
+    get(endpoint: string): Promise<Array<ITask>>;
     post(endpoint: string, body: ITask): Promise<ITask>;
     put(endpoint: string, body: ITask): Promise<ITask>;
     delete(endpoint: string): Promise<void>;
@@ -38,33 +38,44 @@ export default class TodoApp {
         tasksFiltersWrapper: <HTMLDivElement>document.getElementById(`filters-wrapper`),
         tasksFiltersButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`),
     };
+
     constructor(url: string) {
         this.fetchUtils = new FetchUtils(url);
-        this.getTasks().then((r: Array<ITask>): void => {
-            r.map((task: ITask) => this.createTasksListItem(task));
-            this.tasksCounter();
-        });
+        this.getTasks();
         this.setEvents();
     };
 
-    getTasks = async (): Promise<Array<ITask>> => await this.fetchUtils.get(`tasks`);
+    getTasks = async (): Promise<void> => {
+        const tasks = await this.fetchUtils.get(`tasks`);
+        tasks.map((task: ITask) => this.createTasksListItem(task));
+        this.tasksCounter();
+    };
 
     addTaskToApi = async (e: SubmitEvent): Promise<void> => {
         e.preventDefault();
         this.handleErrorHide();
-        if (this.elements.taskInput.value.length <= 1) {
+        if(!this.validateTaskInput()) {
+            return;
+        }
+        const task: ITask = await this.fetchUtils.post(`tasks`, {
+            taskName: this.elements.taskInput.value,
+            isChecked: this.elements.taskCheckbox.checked
+        });
+        this.elements.taskInput.value = ``;
+        this.createTasksListItem(task);
+        this.tasksCounter();
+    };
+
+    validateTaskInput = (): boolean => {
+        let flag: boolean = true;
+        if (this.elements.taskInput.value.length <= 1){
+            flag = false;
             this.handleErrorShow(`Task must be at least 2 characters long...`);
         } else if (this.elements.taskInput.value.length > 43) {
+            flag = false;
             this.handleErrorShow(`Tasks can't be longer than 43 characters...`);
-        } else {
-            const task: ITask = await this.fetchUtils.post(`tasks`, {
-                taskName: this.elements.taskInput.value,
-                isChecked: this.elements.taskCheckbox.checked
-            });
-            this.elements.taskInput.value = ``;
-            this.createTasksListItem(task);
-            this.tasksCounter();
         }
+        return flag;
     };
 
     handleErrorShow = (errorContent: string): void => {
@@ -82,28 +93,32 @@ export default class TodoApp {
     addCheckedTask = (e: Event): void => (e.target as HTMLInputElement).checked ? this.elements.taskInput.classList.add(`done`) : this.elements.taskInput.classList.remove(`done`);
 
     createTasksListItem = (task: ITask): void => {
-        const listItem: HTMLElement = HtmlUtils.createHtmlElement(`li`, {class: `tasks__list-item`});
-        // CUSTOM__CHECKBOX
-        const checkBoxLabel: HTMLElement = HtmlUtils.createHtmlElement(`label`, {class: `task__checkbox-label`});
-        listItem.appendChild(HtmlUtils.createHtmlElement(`div`, {class: `task__checkbox`})).appendChild(checkBoxLabel);
-        const checkBoxDefault: HTMLElement = HtmlUtils.createHtmlElement(`input`, {class: `task__checkbox-default`, type: `checkbox`, checked: task.isChecked, data: {"task-id": `${task.id}`}});
-        checkBoxLabel.appendChild(checkBoxDefault);
-        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement(`span`, {class: `task__checkbox-custom`}));
-        // TASK____NAME
-        const taskContent: HTMLElement = HtmlUtils.createHtmlElement(`div`, {class: `tasks__item-value`, text: task.taskName})
-        listItem.appendChild(taskContent);
-        task.isChecked && taskContent.classList.add(`done`);
-        // DELETE__BUTTON
-        const deleteBtn: HTMLElement = HtmlUtils.createHtmlElement(`button`, {class: "btn"});
-        listItem.appendChild(deleteBtn).appendChild(HtmlUtils.createHtmlElement(`span`, {class: `fa-solid fa-xmark`}));
-        // EVENT--checkbox
+        const listItem: HTMLLIElement = HtmlUtils.createHtmlElement<HTMLLIElement>(`li`, {class: `tasks__list-item`});
+
+        const checkBoxLabel: HTMLLabelElement = HtmlUtils.createHtmlElement<HTMLLabelElement>(`label`, {class: `task__checkbox-label`});
+
+        const taskCheckbox = listItem.appendChild(HtmlUtils.createHtmlElement<HTMLDivElement>(`div`, {class: `task__checkbox`}));
+        taskCheckbox.appendChild(checkBoxLabel);
+
+        const checkBoxDefault: HTMLInputElement = HtmlUtils.createHtmlElement<HTMLInputElement>(`input`, {class: `task__checkbox-default`, type: `checkbox`, checked: task.isChecked, data: {"task-id": `${task.id}`}});
         checkBoxDefault.addEventListener('change', (e: Event) => this.handleCheckbox(e, task));
-        // EVENT--delete_button
+        checkBoxLabel.appendChild(checkBoxDefault);
+
+        checkBoxLabel.appendChild(HtmlUtils.createHtmlElement<HTMLSpanElement>(`span`, {class: `task__checkbox-custom`}));
+
+        const taskContent: HTMLDivElement = HtmlUtils.createHtmlElement<HTMLDivElement>(`div`, {class: `tasks__item-value`, text: task.taskName});
+        task.isChecked && taskContent.classList.add(`done`);
+        listItem.appendChild(taskContent);
+
+        const deleteBtn: HTMLButtonElement = HtmlUtils.createHtmlElement<HTMLButtonElement>(`button`, {class: "btn"});
         deleteBtn.addEventListener(`click`, (e: MouseEvent) => this.deleteTask(e, task));
-        // add list item to tasksList
+        listItem.appendChild(deleteBtn);
+
+        deleteBtn.appendChild(HtmlUtils.createHtmlElement<HTMLSpanElement>(`span`, {class: `fa-solid fa-xmark`}));
+
         this.elements.tasksList.appendChild(listItem);
     };
-
+    // do tego momentu wszystko gitara
     handleCheckbox = async (e: Event, task: ITask): Promise<void> => {
         const itemValue: HTMLDivElement = <HTMLDivElement>(e.target as HTMLInputElement).closest(`.tasks__list-item`)?.querySelector(`.tasks__item-value`);
         await this.fetchUtils.put(`tasks/${task.id}`, {

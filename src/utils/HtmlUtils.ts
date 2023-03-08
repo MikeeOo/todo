@@ -8,9 +8,11 @@ interface IOptions {
     };
 }
 
+
 export default class HtmlUtils {
-    static createHtmlElement = (selector: string, options: IOptions): HTMLElement => {
-        const el: HTMLElement = document.createElement(selector);
+    static createHtmlElement<T extends HTMLElement>(selector: string, options: IOptions): T {
+        const el: T = document.createElement(selector) as T;
+
         for (const [option, value] of Object.entries(options)) {
             if (option === 'checked' && value) {
                 el.setAttribute(option, value);
@@ -23,6 +25,7 @@ export default class HtmlUtils {
                 el.setAttribute(`data-${dataKey}`, dataValue);
             }
         }
+
         return el;
     };
 };
