@@ -118,7 +118,7 @@ export default class TodoApp {
 
         this.elements.tasksList.appendChild(listItem);
     };
-    // do tego momentu wszystko gitara
+
     handleCheckbox = async (e: Event, task: ITask): Promise<void> => {
         const itemValue: HTMLDivElement = <HTMLDivElement>(e.target as HTMLInputElement).closest(`.tasks__list-item`)?.querySelector(`.tasks__item-value`);
         await this.fetchUtils.put(`tasks/${task.id}`, {
@@ -136,26 +136,30 @@ export default class TodoApp {
     };
 
     deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
+        await this.fetchUtils.delete(`tasks/${task.id}`);
         (e.target as HTMLSpanElement).closest(`.tasks__list-item`)?.remove();
         this.tasksCounter();
-        await this.fetchUtils.delete(`tasks/${task.id}`);
     };
 
     tasksCounter = (): void => {
         const tasksListItems: NodeListOf<HTMLDivElement> = <NodeListOf<HTMLDivElement>>this.elements.tasksList.querySelectorAll(`.tasks__list-item`);
         const tasksNotDoneAmount: number = this.elements.tasksList.querySelectorAll(`.tasks__item-value:not(.done)`).length;
+
         if (!tasksListItems.length) {
             this.elements.tasks.style.display = "none";
         } else {
             this.elements.tasks.style.display = "block";
             tasksListItems.forEach((listItems: HTMLDivElement): string => listItems.style.display = "flex");
+
             if (!tasksNotDoneAmount || tasksListItems.length === tasksNotDoneAmount) {
                 this.elements.tasksFiltersWrapper.style.display = "none";
             } else {
                 this.elements.tasksFiltersWrapper.style.display = "flex";
                 this.elements.tasksClear.style.display = `none`;
             }
+
             (tasksListItems.length === tasksNotDoneAmount) ? this.elements.tasksClear.style.display = `none` : this.elements.tasksClear.style.display = `inline-block`;
+
             if (tasksNotDoneAmount > 1) {
                 this.elements.tasksLeft.innerText = `${tasksNotDoneAmount} items left`;
             } else if (tasksNotDoneAmount === 1) {
@@ -164,15 +168,17 @@ export default class TodoApp {
                 this.elements.tasksLeft.innerText = `All done!`;
             }
         }
+
         this.backToAll();
     };
 
     handleTasksClear = (): void => {
         this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).forEach((checkedItem: Element, index: number): void => {
-            checkedItem.closest(`.tasks__list-item`)?.remove();
-            this.tasksCounter();
-            setTimeout(async (): Promise<void> =>
-                await this.fetchUtils.delete(`tasks/${checkedItem.getAttribute('data-task-id')}`), 200 * index);
+            setTimeout(async (): Promise<void> => {
+                await this.fetchUtils.delete(`tasks/${checkedItem.getAttribute('data-task-id')}`);
+                checkedItem.closest(`.tasks__list-item`)?.remove();
+                this.tasksCounter();
+            }, 200 * index);
         });
     };
 
@@ -202,7 +208,6 @@ export default class TodoApp {
         }
 
         this.setDefaultBtnColors();
-
         (e.target as HTMLButtonElement).style.color = `#FFFFFF`;
 
         this.elements.tasksList.querySelectorAll(`.tasks__list-item`).forEach((taskListItem: Element): void => {
