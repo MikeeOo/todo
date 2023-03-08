@@ -15,7 +15,7 @@ Additionally, there's:
 
 ## Technologies
 Created with:
-* JSON Server: 0.17.2
+* JSON Server version: 0.17.2
 * Typescript version: 4.6.4
 * Sass version: 1.56.2
 
