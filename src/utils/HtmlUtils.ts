@@ -8,7 +8,6 @@ interface IOptions {
     };
 }
 
-
 export default class HtmlUtils {
     static createHtmlElement<T extends HTMLElement>(selector: string, options: IOptions): T {
         const el: T = document.createElement(selector) as T;
