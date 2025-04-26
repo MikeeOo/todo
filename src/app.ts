@@ -17,10 +17,10 @@ interface IElements {
 }
 
 interface ILocalStorageUtils {
-    get(endpoint: string): Array<ITask>;
-    post(endpoint: string, body: ITask): ITask;
-    put(endpoint: string, body: ITask): ITask;
-    delete(endpoint: string): void;
+    get(): Array<ITask>;
+    post(task: ITask): ITask;
+    put(taskId: string, task: ITask): ITask;
+    delete(taskId: string): void;
 }
 
 export default class TodoApp {
@@ -45,7 +45,7 @@ export default class TodoApp {
     };
 
     getTasks = (): void => {
-        const tasks = this.storageUtils.get(`tasks`);
+        const tasks = this.storageUtils.get();
         tasks.map((task: ITask) => this.createTasksListItem(task));
         this.tasksCounter();
     };
@@ -56,7 +56,7 @@ export default class TodoApp {
         if(!this.validateTaskInput()) {
             return;
         }
-        const task: ITask = this.storageUtils.post(`tasks`, {
+        const task: ITask = this.storageUtils.post({
             taskName: this.elements.taskInput.value,
             isChecked: this.elements.taskCheckbox.checked
         });
@@ -120,7 +120,7 @@ export default class TodoApp {
 
     handleCheckbox = (e: Event, task: ITask): void => {
         const itemValue: HTMLDivElement = <HTMLDivElement>(e.target as HTMLInputElement).closest(`.tasks__list-item`)?.querySelector(`.tasks__item-value`);
-        this.storageUtils.put(`tasks/${task.id}`, {
+        this.storageUtils.put(task.id as string, {
             taskName: task.taskName,
             isChecked: (e.target as HTMLInputElement).checked
         });
@@ -135,7 +135,7 @@ export default class TodoApp {
     };
 
     deleteTask = (e: MouseEvent, task: ITask): void => {
-        this.storageUtils.delete(`tasks/${task.id}`);
+        this.storageUtils.delete(task.id as string);
         (e.target as HTMLSpanElement).closest(`.tasks__list-item`)?.remove();
         this.tasksCounter();
     };
@@ -173,8 +173,8 @@ export default class TodoApp {
 	
     handleTasksClear = (): void => {
         this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).forEach((checkedItem: Element): void => {
-            const taskId = checkedItem.getAttribute('data-task-id');
-            this.storageUtils.delete(`tasks/${taskId}`);
+            const taskId = checkedItem.getAttribute('data-task-id') as string;
+            this.storageUtils.delete(taskId);
             checkedItem.closest(`.tasks__list-item`)?.remove();
         });
         this.tasksCounter();

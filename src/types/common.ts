@@ -1,5 +1,5 @@
 export interface ITask {
     taskName: string;
-    id?: number;
+    id?: string;
     isChecked?: boolean;
 }

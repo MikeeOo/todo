@@ -4,23 +4,26 @@ export default class LocalStorageUtils {
     private storageKey: string = 'todo-tasks';
     
     constructor() {
-        // Initialize localStorage if empty
         if (!localStorage.getItem(this.storageKey)) {
             localStorage.setItem(this.storageKey, JSON.stringify([]));
         }
     };
     
-    get = (endpoint: string): Array<ITask> => {
+    get = (): Array<ITask> => {
         const tasks = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
         return tasks;
     };
     
-    post = (endpoint: string, body: ITask): ITask => {
+    post = (task: ITask): ITask => {
         const tasks = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+        const timestamp = Date.now();
+        const uuid = crypto.randomUUID();
+        const hybridId = `${timestamp}-${uuid}`;
+        
         const newTask: ITask = {
-            ...body,
-            id: Date.now(), 
-            isChecked: body.isChecked || false
+            ...task,
+            id: hybridId,
+            isChecked: task.isChecked || false
         };
         
         tasks.push(newTask);
@@ -29,23 +32,21 @@ export default class LocalStorageUtils {
         return newTask;
     };
     
-    put = (endpoint: string, body: ITask): ITask => {
+    put = (taskId: string, task: ITask): ITask => {
         const tasks = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-        const taskId = Number(endpoint.split('/')[1]);
         
-        const updatedTasks = tasks.map((task: ITask) => 
-            task.id === taskId ? { ...task, ...body } : task
+        const updatedTasks = tasks.map((t: ITask) => 
+            t.id === taskId ? { ...t, ...task } : t
         );
         
         localStorage.setItem(this.storageKey, JSON.stringify(updatedTasks));
-        const updatedTask = updatedTasks.find((task: ITask) => task.id === taskId);
+        const updatedTask = updatedTasks.find((t: ITask) => t.id === taskId);
         
         return updatedTask as ITask;
     };
     
-    delete = (endpoint: string): void => {
+    delete = (taskId: string): void => {
         const tasks = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
-        const taskId = Number(endpoint.split('/')[1]);
         
         const filteredTasks = tasks.filter((task: ITask) => task.id !== taskId);
         localStorage.setItem(this.storageKey, JSON.stringify(filteredTasks));
