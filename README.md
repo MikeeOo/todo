@@ -9,6 +9,7 @@ A simple yet powerful Todo application built with TypeScript and Vite that lets 
 - **Filter Tasks**: View all tasks, active tasks, or completed tasks
 - **Delete Tasks**: Remove individual tasks or clear all completed tasks at once
 - **Persistent Storage**: All tasks are saved in your browser's localStorage
+- **Hybrid ID System**: Uses a combination of timestamps and UUIDs for robust task identification
 
 ## Technologies
 
@@ -16,6 +17,7 @@ A simple yet powerful Todo application built with TypeScript and Vite that lets 
 - **Vite** - As the build tool and development server
 - **SASS/SCSS** - For advanced styling
 - **localStorage API** - For client-side data persistence
+- **Web Crypto API** - For UUID generation
 - **HTML5** - For markup
 - **ES6+ JavaScript** - For modern development practices
 
@@ -70,6 +72,18 @@ This Todo application uses the browser's localStorage API to persist your tasks,
 - Mark tasks as complete or incomplete
 - Filter your tasks by status (all, active, completed)
 - Delete individual tasks or clear all completed tasks
+
+### Task ID System
+
+The application uses a hybrid ID system that combines:
+
+- A timestamp (via `Date.now()`) for chronological ordering
+- A UUID (via `crypto.randomUUID()`) for guaranteed uniqueness
+
+This approach provides both:
+
+- Easy sorting and debugging via timestamps
+- Collision-free IDs even for tasks created at the exact same millisecond
 
 No backend server or database is required - all data is stored locally in your browser.
 
