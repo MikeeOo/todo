@@ -20,7 +20,7 @@ body {
 }
 
 #app {
-  background-image: url("assets/bg-desktop-dark.jpg");
+  background-image: url("/bg-desktop-dark.jpg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -51,7 +51,7 @@ input:-webkit-autofill,
 input:-webkit-autofill::first-line,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active,{
+input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
   -webkit-text-fill-color: $text-dim !important;
 }
