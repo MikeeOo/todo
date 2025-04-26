@@ -17,11 +17,10 @@ interface IElements {
 }
 
 interface IFetchUtils {
-    baseUrl: string;
-    get(endpoint: string): Promise<Array<ITask>>;
-    post(endpoint: string, body: ITask): Promise<ITask>;
-    put(endpoint: string, body: ITask): Promise<ITask>;
-    delete(endpoint: string): Promise<void>;
+    get(endpoint: string): Array<ITask>;
+    post(endpoint: string, body: ITask): ITask;
+    put(endpoint: string, body: ITask): ITask;
+    delete(endpoint: string): void;
 }
 
 export default class TodoApp {
@@ -39,25 +38,25 @@ export default class TodoApp {
         tasksFiltersButtons: <NodeListOf<HTMLButtonElement>>document.querySelectorAll(`button[data-filter]`),
     };
 
-    constructor(url: string) {
-        this.fetchUtils = new FetchUtils(url);
+    constructor() {
+        this.fetchUtils = new FetchUtils();
         this.getTasks();
         this.setEvents();
     };
 
-    getTasks = async (): Promise<void> => {
-        const tasks = await this.fetchUtils.get(`tasks`);
+    getTasks = (): void => {
+        const tasks = this.fetchUtils.get(`tasks`);
         tasks.map((task: ITask) => this.createTasksListItem(task));
         this.tasksCounter();
     };
 
-    addTaskToApi = async (e: SubmitEvent): Promise<void> => {
+    addTaskToApi = (e: SubmitEvent): void => {
         e.preventDefault();
         this.handleErrorHide();
         if(!this.validateTaskInput()) {
             return;
         }
-        const task: ITask = await this.fetchUtils.post(`tasks`, {
+        const task: ITask = this.fetchUtils.post(`tasks`, {
             taskName: this.elements.taskInput.value,
             isChecked: this.elements.taskCheckbox.checked
         });
@@ -119,9 +118,9 @@ export default class TodoApp {
         this.elements.tasksList.appendChild(listItem);
     };
 
-    handleCheckbox = async (e: Event, task: ITask): Promise<void> => {
+    handleCheckbox = (e: Event, task: ITask): void => {
         const itemValue: HTMLDivElement = <HTMLDivElement>(e.target as HTMLInputElement).closest(`.tasks__list-item`)?.querySelector(`.tasks__item-value`);
-        await this.fetchUtils.put(`tasks/${task.id}`, {
+        this.fetchUtils.put(`tasks/${task.id}`, {
             taskName: task.taskName,
             isChecked: (e.target as HTMLInputElement).checked
         });
@@ -135,8 +134,8 @@ export default class TodoApp {
         }
     };
 
-    deleteTask = async (e: MouseEvent, task: ITask): Promise<void> => {
-        await this.fetchUtils.delete(`tasks/${task.id}`);
+    deleteTask = (e: MouseEvent, task: ITask): void => {
+        this.fetchUtils.delete(`tasks/${task.id}`);
         (e.target as HTMLSpanElement).closest(`.tasks__list-item`)?.remove();
         this.tasksCounter();
     };
@@ -171,11 +170,12 @@ export default class TodoApp {
 
         this.backToAll();
     };
-
+	// * to jeszcze możesz wywalić
     handleTasksClear = (): void => {
         this.elements.tasksList.querySelectorAll(`input[type="checkbox"]:checked`).forEach((checkedItem: Element, index: number): void => {
-            setTimeout(async (): Promise<void> => {
-                await this.fetchUtils.delete(`tasks/${checkedItem.getAttribute('data-task-id')}`);
+            setTimeout((): void => {
+                const taskId = checkedItem.getAttribute('data-task-id');
+                this.fetchUtils.delete(`tasks/${taskId}`);
                 checkedItem.closest(`.tasks__list-item`)?.remove();
                 this.tasksCounter();
             }, 200 * index);
@@ -238,4 +238,4 @@ export default class TodoApp {
     };
 };
 
-new TodoApp(` http://localhost:3001`);
+new TodoApp();

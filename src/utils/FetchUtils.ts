@@ -1,28 +1,53 @@
 import {ITask} from "../types/common";
 
 export default class FetchUtils {
-    baseUrl: string;
-    constructor(url: string) {
-        this.baseUrl = url;
+    private storageKey: string = 'todo-tasks';
+    
+    constructor() {
+        // Initialize localStorage if empty
+        if (!localStorage.getItem(this.storageKey)) {
+            localStorage.setItem(this.storageKey, JSON.stringify([]));
+        }
     };
-    get = async (endpoint: string): Promise<Array<ITask>> => {
-        return (await fetch(`${this.baseUrl}/${endpoint}/`)).json();
+    
+    get = (endpoint: string): Array<ITask> => {
+        const tasks = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+        return tasks;
     };
-    post = async (endpoint: string, body: ITask, headers: HeadersInit | undefined = {"Content-Type": "application/json"}): Promise<ITask> => {
-        return (await fetch(`${this.baseUrl}/${endpoint}/`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(body)
-        })).json();
+    
+    post = (endpoint: string, body: ITask): ITask => {
+        const tasks = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+        const newTask: ITask = {
+            ...body,
+            id: Date.now(), 
+            isChecked: body.isChecked || false
+        };
+        
+        tasks.push(newTask);
+        localStorage.setItem(this.storageKey, JSON.stringify(tasks));
+        
+        return newTask;
     };
-    put = async (endpoint: string, body: ITask, headers: HeadersInit | undefined = {"Content-Type": "application/json"}): Promise<ITask> => {
-        return (await fetch(`${this.baseUrl}/${endpoint}/`, {
-            method: "PUT",
-            headers: headers,
-            body: JSON.stringify(body)
-        })).json();
+    
+    put = (endpoint: string, body: ITask): ITask => {
+        const tasks = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+        const taskId = Number(endpoint.split('/')[1]);
+        
+        const updatedTasks = tasks.map((task: ITask) => 
+            task.id === taskId ? { ...task, ...body } : task
+        );
+        
+        localStorage.setItem(this.storageKey, JSON.stringify(updatedTasks));
+        const updatedTask = updatedTasks.find((task: ITask) => task.id === taskId);
+        
+        return updatedTask as ITask;
     };
-    delete = async (endpoint: string): Promise<void> => {
-        await fetch(`${this.baseUrl}/${endpoint}/`, {method: "DELETE"});
+    
+    delete = (endpoint: string): void => {
+        const tasks = JSON.parse(localStorage.getItem(this.storageKey) || '[]');
+        const taskId = Number(endpoint.split('/')[1]);
+        
+        const filteredTasks = tasks.filter((task: ITask) => task.id !== taskId);
+        localStorage.setItem(this.storageKey, JSON.stringify(filteredTasks));
     };
 };
