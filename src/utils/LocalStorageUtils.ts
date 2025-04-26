@@ -1,6 +1,6 @@
 import {ITask} from "../types/common";
 
-export default class FetchUtils {
+export default class LocalStorageUtils {
     private storageKey: string = 'todo-tasks';
     
     constructor() {
@@ -50,4 +50,4 @@ export default class FetchUtils {
         const filteredTasks = tasks.filter((task: ITask) => task.id !== taskId);
         localStorage.setItem(this.storageKey, JSON.stringify(filteredTasks));
     };
-};
+}; 
